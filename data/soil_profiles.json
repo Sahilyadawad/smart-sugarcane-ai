@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0",
+  "last_reviewed": "2026-08-20",
+  "data_disclaimer": "Descriptive soil profiles used to explain a VISUAL image estimate. A photograph cannot measure NPK, pH, electrical conductivity or micronutrients. Laboratory soil testing provides accurate nutrient and pH values. The numeric thresholds below only tune the demo image heuristic and can be edited freely.",
+  "limitations": [
+    "A photograph alone cannot determine exact NPK values",
+    "A photograph alone cannot determine soil pH",
+    "A photograph alone cannot determine electrical conductivity or salinity",
+    "A photograph alone cannot determine micronutrient concentrations",
+    "Camera white balance, shadow, flash and time of day change the apparent colour of the same soil",
+    "A wet soil always looks darker than the same soil when dry, which can imitate a different soil class"
+  ],
+  "improve_photo_tips": [
+    "Photograph in indirect daylight, not under a harsh shadow and not with flash",
+    "Fill the frame with soil - avoid grass, hands, tools or sky in the shot",
+    "Hold the camera roughly 30 to 40 cm above a freshly turned patch of soil",
+    "Include a small flat area of levelled soil rather than a lumpy clod pile",
+    "Take one dry-surface photograph and one at root depth for comparison"
+  ],
+  "profiles": {
+    "black": {
+      "label": "Black Soil",
+      "also_known_as": ["Vertisol", "Regur", "Black cotton soil"],
+      "visual_description": "Very dark grey to near black, often with a smooth or slightly shiny surface. Shows wide cracks when dry and becomes very sticky when wet.",
+      "general_properties": [
+        "High clay content with high water-holding capacity",
+        "Slow internal drainage",
+        "Generally rich in calcium and potassium, often low in nitrogen and organic matter",
+        "Swells when wet and shrinks and cracks when dry"
+      ],
+      "sugarcane_suitability": "Widely used for sugarcane in the peninsular belt. Drainage management is the key requirement.",
+      "management_notes": [
+        "Ensure drainage channels are open before the monsoon",
+        "Work the soil only when it is at the right moisture - it is unworkable when wet and hard when dry",
+        "Add organic matter to improve structure and reduce cracking",
+        "Avoid heavy machinery on wet black soil to prevent compaction"
+      ],
+      "irrigation_note": "Holds water for a long time. Irrigate less frequently but check that water is not standing.",
+      "heuristic": { "value_max": 0.34, "saturation_max": 0.45, "texture_note": "smooth to cracked" }
+    },
+    "red": {
+      "label": "Red Soil",
+      "also_known_as": ["Red loam", "Lateritic red soil"],
+      "visual_description": "Reddish-brown to rust coloured, from iron oxide content. Usually looks lighter and more granular than black soil.",
+      "general_properties": [
+        "Light to medium texture with moderate drainage",
+        "Often low in nitrogen, phosphorus and organic matter",
+        "Can be slightly acidic in some regions",
+        "Lower water-holding capacity than black soil"
+      ],
+      "sugarcane_suitability": "Sugarcane can be grown with assured irrigation and good organic matter management.",
+      "management_notes": [
+        "Add organic matter every season to raise water-holding capacity",
+        "Use more frequent, smaller irrigations",
+        "A soil test is particularly valuable, as phosphorus is often limiting",
+        "Mulching with trash reduces surface evaporation"
+      ],
+      "irrigation_note": "Dries out faster than black soil. Shorter irrigation intervals are usually needed.",
+      "heuristic": { "hue_range": [2, 30], "saturation_min": 0.28, "value_range": [0.22, 0.7], "texture_note": "granular" }
+    },
+    "sandy": {
+      "label": "Sandy Soil",
+      "also_known_as": ["Light soil", "Coarse textured soil"],
+      "visual_description": "Pale yellowish to light brown with a visibly grainy texture. Individual particles are often distinguishable in a close photograph.",
+      "general_properties": [
+        "Very high infiltration and very low water-holding capacity",
+        "Low natural fertility and low organic matter",
+        "Nutrients leach rapidly below the root zone",
+        "Warms up quickly and dries quickly"
+      ],
+      "sugarcane_suitability": "Possible only with assured, frequent irrigation and a strong organic matter programme. Drip irrigation is a major advantage here.",
+      "management_notes": [
+        "Prioritise organic matter - it is the single most effective amendment",
+        "Use frequent small irrigations rather than heavy flooding",
+        "Use the maximum practical number of nutrient splits",
+        "Consider drip irrigation and fertigation if available"
+      ],
+      "irrigation_note": "Needs the shortest irrigation interval of all the classes. Heavy single irrigations mostly drain away.",
+      "heuristic": { "hue_range": [25, 55], "value_min": 0.5, "saturation_max": 0.55, "texture_note": "grainy, high local variance" }
+    },
+    "clay": {
+      "label": "Clay Soil",
+      "also_known_as": ["Heavy soil", "Fine textured soil"],
+      "visual_description": "Greyish-brown to brown with a smooth, dense, sometimes polished-looking surface. Forms hard clods when dry.",
+      "general_properties": [
+        "High water-holding capacity and slow drainage",
+        "Good nutrient retention",
+        "Prone to waterlogging, surface crusting and compaction",
+        "Difficult to work at the wrong moisture level"
+      ],
+      "sugarcane_suitability": "Suitable where drainage is properly managed. Waterlogging is the main risk to the crop.",
+      "management_notes": [
+        "Maintain open drainage channels",
+        "Avoid working or driving on the field when saturated",
+        "Add compost to improve aeration",
+        "Consider raised beds or ridge planting where waterlogging recurs"
+      ],
+      "irrigation_note": "Long irrigation intervals. Check for standing water after each irrigation.",
+      "heuristic": { "hue_range": [12, 40], "value_range": [0.3, 0.6], "saturation_max": 0.4, "texture_note": "smooth, low local variance" }
+    },
+    "loamy": {
+      "label": "Loamy Soil",
+      "also_known_as": ["Medium textured soil"],
+      "visual_description": "Medium to dark brown with a crumbly texture. Neither as dark as black soil nor as pale and grainy as sandy soil.",
+      "general_properties": [
+        "Balanced sand, silt and clay fractions",
+        "Good water retention with adequate drainage",
+        "Good nutrient-holding capacity",
+        "Generally the easiest texture to manage"
+      ],
+      "sugarcane_suitability": "Generally regarded as the most favourable texture for sugarcane.",
+      "management_notes": [
+        "Maintain organic matter with compost or green manure",
+        "Follow the standard local split fertilizer schedule",
+        "Routine drainage maintenance is usually sufficient"
+      ],
+      "irrigation_note": "Moderate irrigation intervals. Follow the schedule from the irrigation module and verify by hand.",
+      "heuristic": { "hue_range": [12, 38], "value_range": [0.3, 0.55], "saturation_range": [0.18, 0.55], "texture_note": "crumbly, moderate variance" }
+    },
+    "mixed": {
+      "label": "Mixed / Unknown",
+      "also_known_as": ["Unclassified"],
+      "visual_description": "The image did not match any single class clearly. This can happen with mixed soil, unusual lighting, wet soil, or a photograph containing non-soil objects.",
+      "general_properties": [
+        "Not determined from this image"
+      ],
+      "sugarcane_suitability": "Not determined. A laboratory soil test will give a reliable answer.",
+      "management_notes": [
+        "Retake the photograph in indirect daylight, filling the frame with soil",
+        "Get a laboratory soil test for nutrient and pH values",
+        "Use the manual soil type selector on the recommendation form if you already know your soil type"
+      ],
+      "irrigation_note": "Check soil moisture by hand at root depth until the soil type is confirmed.",
+      "heuristic": {}
+    }
+  },
+  "moisture_appearance": {
+    "dry": { "label": "Dry appearance", "note": "The surface looks pale and light with no darkening from moisture. Confirm by hand at root depth - the surface can be dry while the root zone is still moist." },
+    "moderate": { "label": "Moderately moist appearance", "note": "The surface shows some darkening consistent with moisture. This is a visual impression only, not a measurement." },
+    "wet": { "label": "Visibly wet appearance", "note": "The surface looks dark and saturated, possibly with a sheen. Check that water is not standing, especially in clay and black soils." }
+  },
+  "organic_matter_appearance": {
+    "low": { "label": "Low apparent organic matter", "note": "Light colour with little visible plant residue. Consider adding well-decomposed compost or farmyard manure. Confirm with a laboratory organic carbon test." },
+    "moderate": { "label": "Moderate apparent organic matter", "note": "Some darkening and visible residue. Maintain current organic matter practice." },
+    "high": { "label": "High apparent organic matter", "note": "Dark colour with visible residue. Note that dark colour can also come from moisture or from a naturally black soil, so this is not a reliable organic carbon reading." }
+  }
+}

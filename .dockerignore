@@ -1,0 +1,28 @@
+# Keep the build context small and never ship local state into the image.
+**/venv/
+**/node_modules/
+**/__pycache__/
+**/*.pyc
+frontend/
+.git/
+.github/
+.vscode/
+
+# Local secrets and local data
+**/.env
+!**/.env.example
+*.db
+*.sqlite
+*.sqlite3
+backend/smart_sugarcane.db
+
+# User uploads are runtime state, not build input
+uploads/**
+!uploads/.gitkeep
+
+# Generated training data (the model artifact in models/ IS copied in)
+ml/irrigation/irrigation_dataset.csv
+
+docs/
+*.md
+!README.md

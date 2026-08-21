@@ -1,0 +1,149 @@
+@import 'tailwindcss';
+
+/* Theme toggle is class-based (Settings page writes `.dark` on <html>), so the
+   default prefers-color-scheme variant is replaced with a class variant. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Primary crop green */
+  --color-cane-50: #f0fdf4;
+  --color-cane-100: #dcfce7;
+  --color-cane-200: #bbf7d0;
+  --color-cane-300: #86efac;
+  --color-cane-400: #4ade80;
+  --color-cane-500: #22c55e;
+  --color-cane-600: #16a34a;
+  --color-cane-700: #15803d;
+  --color-cane-800: #166534;
+  --color-cane-900: #14532d;
+  --color-cane-950: #052e16;
+
+  /* Soil / earth accent */
+  --color-soil-50: #fdf8f3;
+  --color-soil-100: #f8ecdf;
+  --color-soil-200: #efd6bd;
+  --color-soil-300: #e2b891;
+  --color-soil-400: #d29463;
+  --color-soil-500: #c67a45;
+  --color-soil-600: #b0623a;
+  --color-soil-700: #924d32;
+  --color-soil-800: #77402e;
+  --color-soil-900: #613629;
+  --color-soil-950: #341b14;
+
+  /* Water accent */
+  --color-water-400: #38bdf8;
+  --color-water-500: #0ea5e9;
+  --color-water-600: #0284c7;
+  --color-water-700: #0369a1;
+
+  --radius-card: 1rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-slate-50 font-sans text-slate-700 antialiased;
+    @apply dark:bg-slate-950 dark:text-slate-300;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold text-slate-900 dark:text-white;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-cane-600;
+  }
+
+  /* Recharts renders SVG text that ignores body colour */
+  .recharts-text {
+    @apply fill-slate-500 text-xs dark:fill-slate-400;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+    @apply dark:border-slate-800 dark:bg-slate-900;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:border-cane-300 hover:shadow-lg;
+    @apply dark:hover:border-cane-700;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900;
+    @apply placeholder:text-slate-400 focus:border-cane-500 focus:ring-2 focus:ring-cane-500/20;
+    @apply outline-none transition disabled:cursor-not-allowed disabled:bg-slate-100;
+    @apply dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:disabled:bg-slate-900;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300;
+  }
+
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold;
+    @apply transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply bg-cane-600 text-white shadow-sm hover:bg-cane-700 active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply border border-slate-300 bg-white text-slate-700 hover:bg-slate-50;
+    @apply dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700;
+  }
+
+  .btn-ghost {
+    @apply text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800;
+  }
+
+  .section {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .prose-list {
+    @apply space-y-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400;
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fade-up 0.4s ease-out both;
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

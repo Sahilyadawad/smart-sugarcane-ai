@@ -1,0 +1,119 @@
+"""Application configuration.
+
+Every path in the project is derived from PROJECT_ROOT so the backend works the
+same whether uvicorn is started from ``backend/`` or from the repository root.
+"""
+
+from __future__ import annotations
+
+from functools import lru_cache
+from pathlib import Path
+from typing import List
+
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# config.py -> core -> app -> backend -> <project root>
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+BACKEND_DIR = PROJECT_ROOT / "backend"
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=(BACKEND_DIR / ".env", PROJECT_ROOT / ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=False,
+    )
+
+    # --- General ---
+    APP_NAME: str = "Smart Sugarcane AI"
+    APP_VERSION: str = "1.0.0"
+    API_PREFIX: str = "/api"
+    DEBUG: bool = True
+
+    # --- Security ---
+    SECRET_KEY: str = "dev-only-insecure-secret-change-me"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
+
+    # --- Database ---
+    DATABASE_URL: str = ""
+
+    # --- CORS ---
+    # Kept as a plain string, not List[str], on purpose. pydantic-settings tries
+    # to JSON-decode complex types read from a .env file *before* any validator
+    # runs, so a comma-separated value raises SettingsError instead of reaching
+    # a `mode="before"` validator. Parsing happens in `cors_origins` below.
+    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173"
+
+    # --- Uploads ---
+    UPLOAD_DIR: str = "uploads"
+    MAX_UPLOAD_MB: int = 10
+
+    # --- ML ---
+    # demo | production | auto
+    MODEL_MODE: str = "auto"
+
+    # --- Weather ---
+    OPENWEATHER_API_KEY: str = ""
+    DEFAULT_WEATHER_CITY: str = "Belagavi,IN"
+
+    @field_validator("MODEL_MODE", mode="before")
+    @classmethod
+    def _normalise_mode(cls, value):
+        allowed = {"demo", "production", "auto"}
+        text = str(value or "auto").strip().lower()
+        return text if text in allowed else "auto"
+
+    @property
+    def cors_origins(self) -> List[str]:
+        """Allowed frontend origins, parsed from the comma-separated setting."""
+        return [item.strip() for item in self.CORS_ORIGINS.split(",") if item.strip()]
+
+    # ------------------------------------------------------------------ paths
+    @property
+    def project_root(self) -> Path:
+        return PROJECT_ROOT
+
+    @property
+    def data_dir(self) -> Path:
+        return PROJECT_ROOT / "data"
+
+    @property
+    def models_dir(self) -> Path:
+        return PROJECT_ROOT / "models"
+
+    @property
+    def upload_path(self) -> Path:
+        raw = Path(self.UPLOAD_DIR)
+        return raw if raw.is_absolute() else PROJECT_ROOT / raw
+
+    @property
+    def database_uri(self) -> str:
+        """Absolute SQLite URI by default so the DB file never moves around."""
+        if self.DATABASE_URL:
+            url = self.DATABASE_URL
+            # Turn a relative sqlite path into an absolute one.
+            if url.startswith("sqlite:///./"):
+                relative = url.replace("sqlite:///./", "", 1)
+                return f"sqlite:///{(BACKEND_DIR / relative).as_posix()}"
+            return url
+        return f"sqlite:///{(BACKEND_DIR / 'smart_sugarcane.db').as_posix()}"
+
+    @property
+    def max_upload_bytes(self) -> int:
+        return self.MAX_UPLOAD_MB * 1024 * 1024
+
+
+@lru_cache
+def get_settings() -> Settings:
+    settings = Settings()
+    # Make sure the directories the app writes to exist.
+    for sub in ("plants", "soil"):
+        (settings.upload_path / sub).mkdir(parents=True, exist_ok=True)
+    settings.models_dir.mkdir(parents=True, exist_ok=True)
+    return settings
+
+
+settings = get_settings()

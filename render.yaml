@@ -1,0 +1,65 @@
+# Render blueprint for the Smart Sugarcane AI backend.
+#
+# Render runs a real container, so unlike Vercel's serverless functions it can
+# hold the 457 MB scientific-Python stack, keep the trained model warm in memory
+# between requests, and (on a paid plan) mount a persistent disk for SQLite and
+# uploaded photos.
+#
+# Deploy: push to GitHub, then in Render choose "New > Blueprint" and point it
+# at this repository.
+
+services:
+  - type: web
+    name: smart-sugarcane-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/system/health
+
+    envVars:
+      # Render generates a strong value and keeps it stable across deploys.
+      - key: SECRET_KEY
+        generateValue: true
+
+      # Set this to your Vercel URL after the frontend is deployed, e.g.
+      #   https://smart-sugarcane-ai.vercel.app
+      # Comma-separated for multiple origins. No trailing slash.
+      - key: CORS_ORIGINS
+        sync: false
+
+      - key: MODEL_MODE
+        value: auto
+
+      - key: MAX_UPLOAD_MB
+        value: "10"
+
+      # Optional live weather. Leave unset and the app says so honestly.
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: DEFAULT_WEATHER_CITY
+        value: Belagavi,IN
+
+      # ---------------------------------------------------------------
+      # DATABASE_URL is deliberately NOT set here.
+      #
+      # Without it the app falls back to SQLite inside the container, which
+      # works but is WIPED ON EVERY DEPLOY AND RESTART on the free plan.
+      # That is fine for a demo; it is not fine for real use.
+      #
+      # For durable data, either:
+      #   (a) add a Render PostgreSQL instance and set
+      #       DATABASE_URL=postgresql+psycopg://...   (also add psycopg to
+      #       backend/requirements.txt), or
+      #   (b) upgrade to a paid plan and attach the disk below, then set
+      #       DATABASE_URL=sqlite:////var/data/smart_sugarcane.db
+      # ---------------------------------------------------------------
+
+    # Persistent storage is NOT available on Render's free plan. Uncomment this
+    # block on a paid plan to keep the database and uploaded photos across
+    # deploys, and set UPLOAD_DIR=/var/data/uploads.
+    #
+    # disk:
+    #   name: sugarcane-data
+    #   mountPath: /var/data
+    #   sizeGB: 1

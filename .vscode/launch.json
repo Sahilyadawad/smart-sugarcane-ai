@@ -1,0 +1,49 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: FastAPI (uvicorn)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"],
+      "cwd": "${workspaceFolder}/backend",
+      "jinja": true,
+      "justMyCode": false,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Backend: run smoke test",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/smoke_test.py",
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "ML: train irrigation model",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ml/irrigation/train.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Frontend: Vite dev server",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full stack",
+      "configurations": ["Backend: FastAPI (uvicorn)", "Frontend: Vite dev server"],
+      "stopAll": true
+    }
+  ]
+}

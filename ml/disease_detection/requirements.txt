@@ -1,0 +1,17 @@
+# Deep-learning dependencies for TRAINING and RUNNING the image models.
+# These are deliberately NOT in backend/requirements.txt: TensorFlow is a large
+# download (~250 MB) and the backend runs fine without it in demo image mode.
+#
+# Install into the same virtual environment as the backend:
+#     pip install -r ml/disease_detection/requirements.txt
+#
+# Windows + Python 3.12 note: install tensorflow-cpu, not tensorflow. The GPU
+# build has no Windows wheels for recent versions and pip will fail or silently
+# install something you cannot use.
+
+tensorflow-cpu==2.18.0 ; sys_platform == "win32"
+tensorflow==2.18.0 ; sys_platform != "win32"
+
+# Useful during training runs
+matplotlib==3.10.0
+scikit-learn==1.6.0

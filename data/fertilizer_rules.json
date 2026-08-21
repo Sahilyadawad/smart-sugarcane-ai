@@ -1,0 +1,204 @@
+{
+  "schema_version": "1.0",
+  "last_reviewed": "2026-08-20",
+  "data_disclaimer": "This rule base produces QUALITATIVE nutrient guidance only - which nutrients deserve attention at which stage, and how to time applications. It deliberately contains NO fixed fertilizer quantities, NO product names and NO chemical dosages, because correct quantities depend on your soil test, your variety, your yield target and your state's recommendation. For exact fertilizer quantities and chemical products, use a laboratory soil test and consult your local agricultural extension recommendations.",
+  "priority_scale": ["low", "medium", "high"],
+  "growth_stages": {
+    "germination": {
+      "label": "Germination / Establishment",
+      "typical_window": "Roughly 0 to 45 days after planting",
+      "goal": "Get uniform sprouting and a healthy root system started.",
+      "nutrient_priority": { "nitrogen": "medium", "phosphorus": "high", "potassium": "low" },
+      "focus": "Root development and uniform sprouting. Phosphorus availability at planting matters most here.",
+      "practices": [
+        "Apply the basal dose at planting as advised by your local recommendation",
+        "Incorporate well-decomposed farmyard manure or compost before planting",
+        "Keep the soil moist but never waterlogged - setts rot in standing water",
+        "Do not apply a heavy nitrogen dose at this stage"
+      ],
+      "timing_note": "Basal application at planting. Hold back the bulk of the nitrogen for later stages."
+    },
+    "tillering": {
+      "label": "Tillering",
+      "typical_window": "Roughly 45 to 120 days after planting",
+      "goal": "Produce a good number of healthy tillers that will become millable canes.",
+      "nutrient_priority": { "nitrogen": "high", "phosphorus": "medium", "potassium": "medium" },
+      "focus": "Nitrogen drives tiller production. This is the stage where nitrogen response is usually strongest.",
+      "practices": [
+        "Apply the first top-dressing split during early tillering",
+        "Earth up after top-dressing so nutrients are covered and tillers are supported",
+        "Keep weeds controlled - they compete directly for the applied nitrogen",
+        "Irrigate after top-dressing so nutrients move into the root zone"
+      ],
+      "timing_note": "Split the nitrogen. A single large dose is wasteful and can be lost to leaching or volatilisation."
+    },
+    "grand_growth": {
+      "label": "Grand Growth / Elongation",
+      "typical_window": "Roughly 120 to 270 days after planting",
+      "goal": "Maximise cane elongation and internode formation. This is the peak water and nutrient demand period.",
+      "nutrient_priority": { "nitrogen": "high", "phosphorus": "low", "potassium": "high" },
+      "focus": "Nitrogen for growth and potassium for stalk strength and water regulation. Water demand peaks here.",
+      "practices": [
+        "Complete the remaining nitrogen splits by the end of this stage",
+        "Apply potassium as advised - it supports lodging resistance and water-use efficiency",
+        "Do not apply nitrogen late into this stage, as it delays maturity and lowers sugar recovery",
+        "Maintain steady irrigation - moisture stress here causes the largest yield loss",
+        "Consider propping or tying to reduce lodging in tall varieties"
+      ],
+      "timing_note": "Finish nitrogen application before the crop moves into maturation."
+    },
+    "maturation": {
+      "label": "Maturation / Ripening",
+      "typical_window": "Roughly 270 days to harvest",
+      "goal": "Let sugar accumulate in the cane. Growth should slow down deliberately.",
+      "nutrient_priority": { "nitrogen": "low", "phosphorus": "low", "potassium": "medium" },
+      "focus": "Stop nitrogen. Late nitrogen keeps the crop vegetative and reduces sucrose recovery.",
+      "practices": [
+        "Do not apply nitrogen during ripening",
+        "Gradually reduce irrigation as advised locally to encourage ripening",
+        "Withhold irrigation before harvest according to your factory's or advisory's guidance",
+        "Detrash and keep the field clean before harvest"
+      ],
+      "timing_note": "Nutrient applications should already be complete. Focus shifts to water management."
+    },
+    "ratoon_initiation": {
+      "label": "Ratoon Initiation",
+      "typical_window": "Immediately after harvest of the previous crop",
+      "goal": "Get uniform ratoon sprouting from healthy stubble.",
+      "nutrient_priority": { "nitrogen": "high", "phosphorus": "medium", "potassium": "medium" },
+      "focus": "A ratoon crop generally needs prompt nutrition because it starts from an already depleted soil.",
+      "practices": [
+        "Stubble shave and gap fill promptly after harvest",
+        "Apply the first nutrient dose soon after harvest as locally advised",
+        "Incorporate trash for organic matter where local practice supports it",
+        "Do not ratoon a block that had heavy red rot, smut or virus incidence"
+      ],
+      "timing_note": "Timeliness matters more in ratoon than in a plant crop - delays reduce sprouting uniformity."
+    }
+  },
+  "soil_type_adjustments": {
+    "black": {
+      "label": "Black Soil (Vertisol / Regur)",
+      "notes": [
+        "High clay content holds water well but drains slowly",
+        "Generally good in potassium but often low in available nitrogen",
+        "Cracks when dry and becomes sticky when wet, which affects application timing"
+      ],
+      "nitrogen_note": "Usually needs attention - organic nitrogen release can be slow.",
+      "phosphorus_note": "Phosphorus can get fixed in high-pH black soils. Placement near the root zone helps.",
+      "potassium_note": "Often naturally adequate. Confirm with a soil test before adding more.",
+      "organic_matter_note": "Adding compost improves structure and drainage, which matters a lot in black soil.",
+      "split_note": "Apply when the soil is workable - avoid application on cracked dry soil or on saturated soil.",
+      "drainage_flag": "Drainage is the main risk. Ensure field channels are clear before the monsoon."
+    },
+    "red": {
+      "label": "Red Soil",
+      "notes": [
+        "Usually lighter textured with lower water-holding capacity",
+        "Often low in nitrogen, phosphorus and organic matter",
+        "Can be slightly acidic in some regions"
+      ],
+      "nitrogen_note": "Needs attention. Leaching risk is higher, so more splits are usually better.",
+      "phosphorus_note": "Often deficient. A soil test is particularly valuable here.",
+      "potassium_note": "Frequently on the lower side. Confirm with a soil test.",
+      "organic_matter_note": "Organic matter addition is especially valuable to raise water-holding capacity.",
+      "split_note": "Use more, smaller splits to reduce leaching losses.",
+      "drainage_flag": "Drainage is usually adequate. Water retention is the bigger concern."
+    },
+    "sandy": {
+      "label": "Sandy Soil",
+      "notes": [
+        "Drains very quickly and holds little water",
+        "Nutrients leach easily below the root zone",
+        "Low natural fertility and low organic matter"
+      ],
+      "nitrogen_note": "High leaching risk. Frequent small splits are much more efficient than large doses.",
+      "phosphorus_note": "Usually needs attention. Place close to the root zone.",
+      "potassium_note": "Leaches readily. Split applications are preferable.",
+      "organic_matter_note": "Organic matter is the single most valuable amendment here - it raises both water and nutrient retention.",
+      "split_note": "Use the maximum practical number of splits. Fertigation through drip is ideal if available.",
+      "drainage_flag": "Over-drainage is the concern. Irrigate little and often."
+    },
+    "clay": {
+      "label": "Clay Soil",
+      "notes": [
+        "High water-holding capacity but poor internal drainage",
+        "Prone to waterlogging and surface crusting",
+        "Nutrient retention is generally good"
+      ],
+      "nitrogen_note": "Losses under waterlogged conditions can be significant. Time applications to avoid saturated soil.",
+      "phosphorus_note": "Can be fixed and made less available. Placement matters.",
+      "potassium_note": "Usually retained well. Confirm with a soil test.",
+      "organic_matter_note": "Compost improves aeration and reduces compaction.",
+      "split_note": "Apply when the soil is workable, ideally before a light irrigation rather than a heavy one.",
+      "drainage_flag": "Waterlogging is the main risk. Ensure drainage channels are open and functioning."
+    },
+    "loamy": {
+      "label": "Loamy Soil",
+      "notes": [
+        "Generally the most favourable texture for sugarcane",
+        "Balanced water retention and drainage",
+        "Good nutrient-holding capacity"
+      ],
+      "nitrogen_note": "Follow the standard local split schedule.",
+      "phosphorus_note": "Follow the soil-test-based local recommendation.",
+      "potassium_note": "Follow the soil-test-based local recommendation.",
+      "organic_matter_note": "Maintain organic matter with regular compost or green manure.",
+      "split_note": "The standard local split schedule usually works well.",
+      "drainage_flag": "Generally favourable. Routine drainage maintenance is enough."
+    },
+    "mixed": {
+      "label": "Mixed / Unclassified Soil",
+      "notes": [
+        "Soil type could not be determined confidently",
+        "Guidance below is generic and conservative"
+      ],
+      "nitrogen_note": "Follow the standard local split schedule until a soil test is available.",
+      "phosphorus_note": "A laboratory soil test is strongly recommended before deciding.",
+      "potassium_note": "A laboratory soil test is strongly recommended before deciding.",
+      "organic_matter_note": "Adding well-decomposed organic matter is safe and beneficial in almost every soil.",
+      "split_note": "Use a moderate number of splits as a safe default.",
+      "drainage_flag": "Check drainage by hand after an irrigation to see how quickly water disappears."
+    }
+  },
+  "npk_test_rating": {
+    "note": "These are SOIL TEST RATING CLASSES used by many Indian soil testing laboratories, expressed in kg/ha of available nutrient. They classify a soil test value as low, medium or high. They are NOT fertilizer dose recommendations. Rating boundaries vary between states and laboratories - use the classes printed on your own soil health card where available.",
+    "nitrogen": { "unit": "kg/ha available N", "low": "below 280", "medium": "280 to 560", "high": "above 560" },
+    "phosphorus": { "unit": "kg/ha available P2O5", "low": "below 10", "medium": "10 to 25", "high": "above 25" },
+    "potassium": { "unit": "kg/ha available K2O", "low": "below 110", "medium": "110 to 280", "high": "above 280" }
+  },
+  "ph_guidance": [
+    { "band": "below 5.5", "label": "Strongly acidic", "note": "Nutrient availability is restricted and aluminium toxicity is possible. Discuss liming with your extension officer based on a soil test." },
+    { "band": "5.5 to 6.5", "label": "Slightly acidic", "note": "Generally workable for sugarcane. Monitor and maintain organic matter." },
+    { "band": "6.5 to 7.5", "label": "Near neutral", "note": "Favourable range for sugarcane nutrient availability." },
+    { "band": "7.5 to 8.5", "label": "Slightly alkaline", "note": "Phosphorus, zinc and iron availability can drop. Watch for micronutrient deficiency symptoms." },
+    { "band": "above 8.5", "label": "Strongly alkaline / possible sodicity", "note": "Get a full soil test including electrical conductivity and exchangeable sodium. Amendment decisions need laboratory data." }
+  ],
+  "organic_matter_guidance": {
+    "low": "Prioritise well-decomposed farmyard manure, compost, press mud or green manure. Organic matter improves structure, water retention and nutrient buffering.",
+    "medium": "Maintain the current organic matter level with regular compost or trash incorporation.",
+    "high": "Good. Continue current practice and focus nutrient decisions on the soil test."
+  },
+  "water_availability_adjustments": {
+    "low": "With limited water, more splits of smaller size are risky because each needs irrigation to be effective. Coordinate nutrient application with your planned irrigation events, and prioritise organic matter to hold moisture.",
+    "medium": "A standard split schedule is workable. Apply before a planned irrigation so nutrients reach the root zone.",
+    "high": "Splits can be scheduled flexibly. If drip irrigation is available, fertigation gives the best nutrient-use efficiency."
+  },
+  "plant_health_adjustments": {
+    "healthy": "No disease-driven change. Follow the stage-based schedule.",
+    "diseased_fungal": "Avoid pushing heavy nitrogen on a diseased crop - soft lush growth is more vulnerable. Keep nutrition balanced and prioritise sanitation and drainage.",
+    "diseased_viral": "Nutrition cannot cure a viral infection. Keep the schedule balanced to support the remaining healthy crop and focus on clean seed for the next season.",
+    "diseased_bacterial": "Keep the crop free of moisture stress and keep nutrition balanced. Tool hygiene and clean seed matter more than any nutrient change.",
+    "unknown": "Do not make corrective nutrient applications until the cause is identified. A soil test will quickly rule a nutrient problem in or out."
+  },
+  "general_practices": [
+    "Follow local soil-test-based fertilizer recommendations wherever available",
+    "Use split application rather than applying everything at once",
+    "Apply before a planned irrigation so nutrients move into the root zone",
+    "Monitor plant growth and leaf condition and adjust the next split accordingly",
+    "Avoid excessive fertilizer application - it wastes money, pollutes groundwater and can lower sugar recovery",
+    "Incorporate organic matter every season",
+    "Keep a written record of what was applied and when"
+  ],
+  "final_disclaimer": "For exact fertilizer quantities and chemical products, use a laboratory soil test and consult local agricultural extension recommendations."
+}

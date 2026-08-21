@@ -1,0 +1,32 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/Scripts/python.exe",
+  "python.analysis.extraPaths": ["${workspaceFolder}/backend"],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.terminal.activateEnvironment": true,
+
+  "[python]": {
+    "editor.formatOnSave": false,
+    "editor.rulers": [100]
+  },
+  "[typescript]": { "editor.formatOnSave": false },
+  "[typescriptreact]": { "editor.formatOnSave": false },
+
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.pytest_cache": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/venv": true,
+    "**/dist": true,
+    "**/uploads": true
+  },
+
+  "tailwindCSS.experimental.classRegex": [
+    ["className=\"([^\"]*)\"", "([a-zA-Z0-9\\-:\\[\\]\\/\\.%]+)"]
+  ],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
+}

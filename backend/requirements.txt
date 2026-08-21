@@ -1,0 +1,36 @@
+# Smart Sugarcane AI - backend runtime dependencies
+# Python 3.10 - 3.12 recommended (tested on 3.12)
+
+# --- Web framework ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# --- Config & validation ---
+pydantic==2.10.4
+pydantic-settings==2.7.1
+email-validator==2.2.0
+python-dotenv==1.0.1
+
+# --- Database ---
+SQLAlchemy==2.0.36
+
+# --- Authentication ---
+PyJWT==2.10.1
+bcrypt==4.2.1
+
+# --- Machine learning (irrigation model + image heuristics) ---
+numpy==2.2.1
+pandas==2.2.3
+scikit-learn==1.6.0
+joblib==1.4.2
+Pillow==11.1.0
+opencv-python-headless==4.10.0.84
+
+# --- Weather integration (optional API) ---
+httpx==0.28.1
+
+# NOTE: TensorFlow is NOT installed here on purpose - it is a large download and is
+# only needed to TRAIN or RUN the deep-learning image models. Install it separately:
+#     pip install -r ../ml/disease_detection/requirements.txt
+# The backend runs perfectly without it, in clearly-labelled DEMO image mode.

@@ -1,0 +1,71 @@
+# ---------------------------------------------------------------- Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ------------------------------------------------------------------ Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ------------------------------------------------------------ Environment
+.env
+.env.*
+!.env.example
+
+# --------------------------------------------------------------- Database
+*.db
+*.sqlite
+*.sqlite3
+backend/smart_sugarcane.db
+
+# ------------------------------------------- User uploads and trained models
+# Uploaded field photos are user data - never commit them.
+uploads/**
+!uploads/.gitkeep
+!uploads/plants/.gitkeep
+!uploads/soil/.gitkeep
+
+# Trained model artifacts are large binaries. Regenerate them with the
+# scripts in ml/ rather than committing them.
+models/*.joblib
+models/*.keras
+models/*.h5
+models/*.metrics.json
+models/*_meta.json
+!models/.gitkeep
+
+# Generated training data
+ml/irrigation/irrigation_dataset.csv
+
+# ------------------------------------------------------------------- IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# ------------------------------------------------------------------- OS
+.DS_Store
+Thumbs.db
+desktop.ini
