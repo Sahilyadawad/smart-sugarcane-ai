@@ -62,9 +62,18 @@ async def read_image_upload(upload: UploadFile) -> bytes:
 
 
 def save_image(data: bytes, category: str, user_id: int, original_name: str | None = None) -> tuple[str, str]:
-    """Persist bytes under ``uploads/<category>/`` and return (absolute path, public URL)."""
+    """Persist bytes under ``uploads/<category>/`` and return (absolute path, public URL).
+
+    Returns ``("", "")`` when image storage is unavailable - a serverless
+    deployment has no writable disk. The analysis result is still computed and
+    saved; only the picture is missing, and the UI already treats an empty
+    ``image_url`` as "no thumbnail".
+    """
     if category not in {"plants", "soil"}:
         raise ValueError(f"Unknown upload category: {category}")
+
+    if not settings.persist_uploads:
+        return "", ""
 
     suffix = Path(original_name or "").suffix.lower()
     if suffix not in ALLOWED_SUFFIXES:
@@ -73,10 +82,15 @@ def save_image(data: bytes, category: str, user_id: int, original_name: str | No
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     filename = f"u{user_id}-{stamp}-{secrets.token_hex(4)}{suffix}"
 
-    directory: Path = settings.upload_path / category
-    directory.mkdir(parents=True, exist_ok=True)
-    destination = directory / filename
-    destination.write_bytes(data)
+    try:
+        directory: Path = settings.upload_path / category
+        directory.mkdir(parents=True, exist_ok=True)
+        destination = directory / filename
+        destination.write_bytes(data)
+    except OSError:
+        # Read-only or full disk. Losing the thumbnail is far better than
+        # losing the analysis.
+        return "", ""
 
     return str(destination), f"/uploads/{category}/{filename}"
 

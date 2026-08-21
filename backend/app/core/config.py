@@ -6,6 +6,7 @@ same whether uvicorn is started from ``backend/`` or from the repository root.
 
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import List
@@ -51,6 +52,11 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "uploads"
     MAX_UPLOAD_MB: int = 10
 
+    # Serverless platforms (Vercel, Lambda) give the function a read-only
+    # filesystem, so saving uploads is impossible there. Leave unset to
+    # auto-detect; set explicitly to override.
+    PERSIST_UPLOADS: bool | None = None
+
     # --- ML ---
     # demo | production | auto
     MODEL_MODE: str = "auto"
@@ -65,6 +71,18 @@ class Settings(BaseSettings):
         allowed = {"demo", "production", "auto"}
         text = str(value or "auto").strip().lower()
         return text if text in allowed else "auto"
+
+    @property
+    def is_serverless(self) -> bool:
+        """True on platforms that give the function a read-only filesystem."""
+        return bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+
+    @property
+    def persist_uploads(self) -> bool:
+        """Whether uploaded images can be written to disk and served back."""
+        if self.PERSIST_UPLOADS is not None:
+            return self.PERSIST_UPLOADS
+        return not self.is_serverless
 
     @property
     def cors_origins(self) -> List[str]:
@@ -109,10 +127,18 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     settings = Settings()
-    # Make sure the directories the app writes to exist.
-    for sub in ("plants", "soil"):
-        (settings.upload_path / sub).mkdir(parents=True, exist_ok=True)
-    settings.models_dir.mkdir(parents=True, exist_ok=True)
+    # Create the directories the app writes to. On a read-only serverless
+    # filesystem this is both impossible and unnecessary, and an unguarded
+    # mkdir here would crash the app at import time.
+    if settings.persist_uploads:
+        try:
+            for sub in ("plants", "soil"):
+                (settings.upload_path / sub).mkdir(parents=True, exist_ok=True)
+            settings.models_dir.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            # Filesystem turned out to be read-only after all - degrade instead
+            # of taking the whole application down.
+            settings.PERSIST_UPLOADS = False
     return settings
 
 

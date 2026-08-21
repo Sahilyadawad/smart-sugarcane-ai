@@ -1,0 +1,26 @@
+# Keep the serverless function under Vercel's 250 MB limit.
+
+# Training scripts and the model artifact are useless on Vercel - the trimmed
+# dependency set has no scikit-learn to load them with.
+ml/
+models/
+backend/venv/
+backend/smoke_test.py
+backend/calibration_check.py
+
+# Local state
+**/__pycache__/
+**/*.pyc
+**/.env
+*.db
+*.sqlite3
+backend/smart_sugarcane.db
+uploads/
+
+# Docs and tooling
+docs/
+.vscode/
+*.bat
+Dockerfile
+.dockerignore
+render.yaml

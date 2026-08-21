@@ -87,9 +87,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Uploaded images are served straight from disk at /uploads/...
-settings.upload_path.mkdir(parents=True, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=str(settings.upload_path)), name="uploads")
+# Uploaded images are served straight from disk at /uploads/... - but only where
+# there is a writable disk. On serverless the mount would fail at import time.
+if settings.persist_uploads:
+    try:
+        settings.upload_path.mkdir(parents=True, exist_ok=True)
+        app.mount("/uploads", StaticFiles(directory=str(settings.upload_path)), name="uploads")
+    except OSError as exc:  # pragma: no cover - platform dependent
+        logger.warning("Uploads directory is not writable (%s). Image storage disabled.", exc)
 
 app.include_router(api_router, prefix=settings.API_PREFIX)
 
