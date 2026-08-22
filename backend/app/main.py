@@ -10,6 +10,7 @@ Interactive API docs: http://localhost:8000/docs
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, status
@@ -17,6 +18,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api import api_router
 from app.core.config import settings
@@ -31,10 +33,29 @@ logging.basicConfig(
 logger = logging.getLogger("smart_sugarcane")
 
 
+#: Set when the database could not be initialised, so /api/system/status can
+#: report the reason instead of the app simply failing.
+DB_INIT_ERROR: str | None = None
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
-    logger.info("Database ready at %s", settings.database_uri)
+    global DB_INIT_ERROR
+    try:
+        init_db()
+        logger.info("Database ready at %s", settings.database_uri)
+    except Exception as exc:  # noqa: BLE001
+        # A failure here must not kill the whole process. On serverless that
+        # turns every single route - including the health check - into an
+        # opaque FUNCTION_INVOCATION_FAILED, which hides the actual cause.
+        # Better to boot, serve the diagnostics endpoints, and say what broke.
+        DB_INIT_ERROR = f"{type(exc).__name__}: {exc}"
+        logger.error("DATABASE INITIALISATION FAILED: %s", DB_INIT_ERROR)
+        logger.error("URI attempted: %s", settings.database_uri)
+        logger.error(
+            "Endpoints that need the database will return errors. On a serverless host "
+            "set DATABASE_URL to a hosted Postgres connection string."
+        )
 
     irrigation_status = irrigation_model.status()
     disease_status = disease_model.status()
@@ -115,13 +136,59 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-@app.get("/", tags=["System"])
-def root() -> dict:
-    return {
-        "app": settings.APP_NAME,
-        "version": settings.APP_VERSION,
-        "docs": "/docs",
-        "api": settings.API_PREFIX,
-        "status": f"{settings.API_PREFIX}/system/status",
-        "message": "Smart Sugarcane AI backend is running.",
-    }
+# ---------------------------------------------------------------------------
+# Single-server mode
+# ---------------------------------------------------------------------------
+# If the frontend has been built (`cd frontend && npm run build`), serve it from
+# this same process. That gives one origin for the whole application, which
+# means no CORS configuration, one port to expose, and a deployment that matches
+# the single-project Vercel setup.
+#
+# Mounted LAST so that /api, /uploads, /docs and / above always win. Anything
+# else falls through to index.html, which is what a client-side router needs.
+FRONTEND_DIST = settings.project_root / "frontend" / "dist"
+
+
+class SpaStaticFiles(StaticFiles):
+    """StaticFiles that falls back to index.html for unknown paths.
+
+    React Router owns routes like /irrigation and /soil-analysis. They exist
+    only in the browser, so a direct visit or a refresh asks the server for a
+    file that was never built. Plain StaticFiles answers 404; a single-page app
+    needs index.html returned instead so the router can take over.
+
+    Real missing assets (a .js or .png that is genuinely absent) still 404,
+    because returning HTML for those would hide the actual problem.
+    """
+
+    async def get_response(self, path: str, scope):
+        try:
+            return await super().get_response(path, scope)
+        except StarletteHTTPException as exc:
+            if exc.status_code == 404 and not Path(path).suffix:
+                return await super().get_response("index.html", scope)
+            raise
+
+
+if FRONTEND_DIST.is_dir() and (FRONTEND_DIST / "index.html").is_file():
+    # The website owns "/". No JSON root route here, or it would shadow the app.
+    app.mount("/", SpaStaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
+    logger.info("Serving the built frontend from %s", FRONTEND_DIST)
+else:
+    logger.info(
+        "No frontend build found at %s - API only. Run 'npm run build' in frontend/ "
+        "to serve the site from this server too.",
+        FRONTEND_DIST,
+    )
+
+    @app.get("/", tags=["System"])
+    def root() -> dict:
+        """API-only landing response, used when no frontend build is present."""
+        return {
+            "app": settings.APP_NAME,
+            "version": settings.APP_VERSION,
+            "docs": "/docs",
+            "api": settings.API_PREFIX,
+            "status": f"{settings.API_PREFIX}/system/status",
+            "message": "Smart Sugarcane AI backend is running (API only).",
+        }

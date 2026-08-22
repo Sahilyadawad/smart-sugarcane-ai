@@ -14,8 +14,55 @@ from app.ml.knowledge import knowledge_status
 router = APIRouter(prefix="/system", tags=["System"])
 
 
+def _database_state() -> dict:
+    """Live check of the database that is ACTUALLY in use.
+
+    Reports the engine really bound to the app, not the configured URL - those
+    differ whenever DATABASE_URL was rejected and the SQLite fallback kicked in,
+    and reporting the intended one would be actively misleading.
+    """
+    from sqlalchemy import text
+
+    from app.database import ENGINE_ERROR, engine
+
+    # Never expose credentials from a Postgres URL in an API response.
+    actual_uri = engine.url.render_as_string(hide_password=True)
+    kind = engine.dialect.name  # "sqlite", "postgresql", ...
+    ephemeral = kind == "sqlite" and settings.is_serverless
+
+    state: dict = {
+        "kind": kind,
+        "uri": actual_uri,
+        "ephemeral": ephemeral,
+    }
+
+    if ENGINE_ERROR:
+        state["configured_url_rejected"] = ENGINE_ERROR
+        state["note"] = (
+            "DATABASE_URL could not be used, so a local SQLite fallback is running instead. "
+            "Fix the connection string and redeploy."
+        )
+    if ephemeral:
+        state["warning"] = (
+            "SQLite on a serverless host is wiped between invocations - accounts and history "
+            "will not survive. Set DATABASE_URL to a hosted Postgres connection string."
+        )
+
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        state["connected"] = True
+    except Exception as exc:  # noqa: BLE001
+        state["connected"] = False
+        state["error"] = f"{type(exc).__name__}: {exc}"
+        state["hint"] = "Set DATABASE_URL to a valid connection string, then redeploy."
+
+    return state
+
+
 @router.get("/health", response_model=dict)
 def health() -> dict:
+    """Liveness only - deliberately does not touch the database."""
     return {"status": "ok", "app": settings.APP_NAME, "version": settings.APP_VERSION}
 
 
@@ -36,6 +83,9 @@ def status() -> dict:
         "python": sys.version.split()[0],
         "model_mode": settings.MODEL_MODE,
         "opencv_available": HAS_CV2,
+        "serverless": settings.is_serverless,
+        "uploads_persisted": settings.persist_uploads,
+        "database": _database_state(),
         "models": {
             "irrigation": {**irrigation, "label": label(irrigation)},
             "disease": {**disease, "label": label(disease)},

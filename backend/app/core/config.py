@@ -117,6 +117,18 @@ class Settings(BaseSettings):
                 relative = url.replace("sqlite:///./", "", 1)
                 return f"sqlite:///{(BACKEND_DIR / relative).as_posix()}"
             return url
+
+        if self.is_serverless:
+            # The deployment directory is read-only, so the normal location
+            # cannot be created and SQLAlchemy would fail at startup. /tmp is
+            # the one writable path, which at least lets the app boot and
+            # report the real problem instead of returning
+            # FUNCTION_INVOCATION_FAILED for every route.
+            #
+            # This storage does NOT persist between invocations. Set
+            # DATABASE_URL to a hosted Postgres for anything real.
+            return "sqlite:////tmp/smart_sugarcane.db"
+
         return f"sqlite:///{(BACKEND_DIR / 'smart_sugarcane.db').as_posix()}"
 
     @property
