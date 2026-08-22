@@ -1,9 +1,20 @@
 # Keep the serverless function under Vercel's 250 MB limit.
+#
+# IMPORTANT: these patterns follow .gitignore semantics, so a bare "models/"
+# matches a directory of that name at ANY depth. That silently removed
+# backend/app/models/ and backend/app/ml/ from the deployment and the function
+# died with ModuleNotFoundError: No module named 'app.models'.
+#
+# Anything meant as a project-root directory MUST start with a slash.
 
-# Training scripts and the model artifact are useless on Vercel - the trimmed
-# dependency set has no scikit-learn to load them with.
-ml/
-models/
+# Training scripts and model artifacts (project root only - NOT backend/app/ml
+# or backend/app/models, which are application code).
+/ml/
+/models/
+
+/docs/
+/.vscode/
+
 backend/venv/
 backend/smoke_test.py
 backend/calibration_check.py
@@ -15,11 +26,9 @@ backend/calibration_check.py
 *.db
 *.sqlite3
 backend/smart_sugarcane.db
-uploads/
+/uploads/
 
-# Docs and tooling
-docs/
-.vscode/
+# Tooling that has no business in a serverless bundle
 *.bat
 Dockerfile
 .dockerignore
