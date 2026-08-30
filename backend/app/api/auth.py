@@ -65,10 +65,18 @@ def register(payload: UserCreate, db: Session = Depends(get_db)) -> Token:
 def login(payload: UserLogin, db: Session = Depends(get_db)) -> Token:
     user = db.scalars(select(User).where(User.email == payload.email.lower().strip())).first()
     if user is None or not verify_password(payload.password, user.password_hash):
-        # Same message either way so the endpoint does not leak which emails exist.
+        # Identical message whether the email is unknown or the password is wrong,
+        # so the endpoint does not leak which accounts exist. The hint is safe for
+        # the same reason - it says nothing about this particular email, and it
+        # matters because accounts do not carry across deployments: someone who
+        # registered locally has no account on the hosted database.
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password.",
+            detail=(
+                "Incorrect email or password. If you have not registered on this "
+                "deployment yet, create an account - accounts are not shared between "
+                "the local and hosted versions."
+            ),
         )
     return _issue_token(user)
 
@@ -133,8 +141,8 @@ def forgot_password(payload: ForgotPasswordRequest) -> MessageResponse:
     """
     return MessageResponse(
         detail=(
-            "Password reset by email is not enabled in this build - no mail provider is configured. "
-            "Ask an administrator to reset the password, or see docs/API.md for how to wire up the "
-            "reset-token flow."
+            "Password reset by email is not available - this build has no mail provider "
+            "configured, so no reset link can be sent. Register a new account instead, or "
+            "see docs/API.md for how to wire up the reset-token flow."
         )
     )
