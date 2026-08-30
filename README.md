@@ -7,6 +7,27 @@ A full-stack web application: **FastAPI + SQLite + scikit-learn** backend,
 **React + Vite + TypeScript + Tailwind** frontend. Runs entirely on your own
 machine — no cloud account, no API keys required.
 
+## Live deployment
+
+**🌐 https://smart-sugarcane-ai.vercel.app**
+
+Frontend and API are served from a single Vercel project (same origin, no CORS),
+backed by hosted PostgreSQL.
+
+Two differences from a local run, both deliberate and reported by the app itself
+at `/api/system/status`:
+
+| | Local | Vercel |
+|---|---|---|
+| Irrigation | **Trained Random Forest** | Rule engine |
+| Uploaded photos | Stored and displayed | Analysed, not stored |
+
+Vercel caps a Python function at 250 MB and the scientific stack is 457 MB, so
+the deployment ships without scikit-learn and falls back to the water-balance
+engine the model was trained to reproduce (R² 0.96 against it). Its filesystem
+is also read-only, so photos are analysed in memory rather than saved. Run
+`start.bat` locally for the full version.
+
 ---
 
 ## Table of contents

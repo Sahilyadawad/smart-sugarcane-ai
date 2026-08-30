@@ -22,7 +22,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api import api_router
 from app.core.config import settings
-from app.database import init_db
+from app.database import init_db, storage_is_ephemeral
 from app.ml import disease_model, irrigation_model, soil_model
 
 logging.basicConfig(
@@ -77,10 +77,14 @@ async def lifespan(app: FastAPI):
         "TRAINED MODEL" if soil_status["trained_model_available"] else "DEMO HEURISTIC (no model file)",
     )
     logger.info("Uploads    : %s", settings.upload_path)
-    logger.info("Docs       : http://localhost:8000/docs")
+    logger.info("Docs       : %s", "http://localhost:8000/docs" if EXPOSE_DOCS else "disabled (deployed host)")
     logger.info("=" * 78)
     yield
     logger.info("Shutting down.")
+
+
+#: Interactive docs are for local development only - see the FastAPI() call below.
+EXPOSE_DOCS = settings.DEBUG and not settings.is_serverless
 
 
 app = FastAPI(
@@ -96,8 +100,12 @@ app = FastAPI(
         "diagnosis. Check `GET /api/system/status` at any time."
     ),
     lifespan=lifespan,
-    docs_url="/docs",
-    redoc_url="/redoc",
+    # The interactive docs list every route and every request shape, so they are
+    # served only during local development. On a deployed host they would let
+    # anyone enumerate and call the API, so all three endpoints are switched off.
+    docs_url="/docs" if EXPOSE_DOCS else None,
+    redoc_url="/redoc" if EXPOSE_DOCS else None,
+    openapi_url="/openapi.json" if EXPOSE_DOCS else None,
 )
 
 app.add_middleware(
@@ -118,6 +126,32 @@ if settings.persist_uploads:
         logger.warning("Uploads directory is not writable (%s). Image storage disabled.", exc)
 
 app.include_router(api_router, prefix=settings.API_PREFIX)
+
+
+_EPHEMERAL_STORAGE_MESSAGE = (
+    "This deployment has no permanent database, so accounts cannot be saved. "
+    "Anything created here is erased within minutes, which is why signing in "
+    "fails even with the right password. Set the DATABASE_URL environment "
+    "variable to a hosted Postgres connection string and redeploy."
+)
+
+
+@app.middleware("http")
+async def guard_ephemeral_storage(request: Request, call_next):
+    """Refuse auth requests honestly when the database cannot outlive a request.
+
+    Without this the sequence looks like a password problem: register succeeds,
+    the next request lands on a different container with an empty database, and
+    login answers "Incorrect email or password". The credentials were never
+    wrong - there was nowhere to store them. Better to say so than to send
+    someone hunting through their own password manager.
+    """
+    if request.url.path.startswith(f"{settings.API_PREFIX}/auth") and storage_is_ephemeral():
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={"detail": _EPHEMERAL_STORAGE_MESSAGE},
+        )
+    return await call_next(request)
 
 
 @app.exception_handler(RequestValidationError)

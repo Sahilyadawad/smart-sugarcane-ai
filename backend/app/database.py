@@ -91,6 +91,18 @@ class Base(DeclarativeBase):
     """Declarative base for every ORM model."""
 
 
+def storage_is_ephemeral() -> bool:
+    """True when this host throws the database away between requests.
+
+    On Vercel/Lambda each invocation may run in a fresh container with its own
+    private filesystem, so a SQLite file written by one request is invisible to
+    the next. Accounts appear to be created and then "vanish", and every login
+    comes back as "Incorrect email or password". Callers use this to say what is
+    actually wrong instead of blaming the user's credentials.
+    """
+    return settings.is_serverless and engine.dialect.name == "sqlite"
+
+
 def get_db() -> Generator:
     """FastAPI dependency that yields a request-scoped database session."""
     db = SessionLocal()
