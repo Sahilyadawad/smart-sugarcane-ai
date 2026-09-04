@@ -1,14 +1,10 @@
 {
   "class_names": [
     "healthy",
+    "mosaic",
     "red_rot",
     "rust",
-    "smut",
-    "mosaic",
-    "leaf_scald",
     "yellow_leaf"
   ],
-  "note": "These keys must match the keys under 'conditions' in data/disease_recommendations.json, otherwise the app cannot look up the guidance for a predicted class. train.py rewrites this file from your dataset folder names after training.",
-  "unknown_class": "The 'unknown' result is produced at runtime when confidence falls below the floor in app/ml/disease_model.py. It is not a trainable class and must not be a folder in your dataset.",
-  "updated_at": null
+  "updated_at": "2026-09-04T19:11:39+00:00"
 }

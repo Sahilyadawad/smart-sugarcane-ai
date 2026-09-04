@@ -4,6 +4,42 @@ How to get from DEMO mode to real trained models.
 
 ---
 
+## The dataset this project was trained on
+
+A labelled sugarcane leaf dataset supplied by the project author, extracted to
+`~/datasets/sugarcane`:
+
+| Class folder | Images |
+|---|---|
+| `healthy` | 522 |
+| `mosaic` | 462 |
+| `red_rot` | 518 |
+| `rust` | 514 |
+| `yellow_leaf` | 505 |
+| **Total** | **2,521** |
+
+All 2,521 files verified readable, JPEG, mostly around 1040 px on the long edge.
+Folder names were renamed from the archive's `Healthy` / `Mosaic` / `RedRot` /
+`Rust` / `Yellow` to the lowercase keys the application uses, so that predictions
+line up with `data/disease_recommendations.json`.
+
+**Two classes are absent**: `smut` and `leaf_scald`. The app keeps their guidance
+in the knowledge base but the trained model will never predict them, because it
+was never shown an example. Add folders for them and retrain if you obtain
+images.
+
+Retrain from this dataset with:
+
+```bash
+python ml/disease_detection/train.py --data-dir ~/datasets/sugarcane
+```
+
+> Record where your images came from before submitting. An examiner asking "what
+> was this trained on?" deserves a specific answer, and dataset provenance is
+> part of the work.
+
+---
+
 ## What you need
 
 | Model | Data required | Realistic minimum | Good |

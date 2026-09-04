@@ -9,7 +9,7 @@ What is actually running, how accurate it really is, and how to replace it.
 | Module | Out of the box | Type | Where the artifact lives |
 |---|---|---|---|
 | Irrigation | Rule engine → **trained model** after one command | `RandomForestRegressor` + `RandomForestClassifier` | `models/irrigation_model.joblib` |
-| Disease detection | **DEMO heuristic** | Colour + texture scoring | `models/sugarcane_disease_model.keras` (absent) |
+| Disease detection | ✅ **Trained model** | MobileNetV2 transfer learning, 86.3 % val accuracy | `models/sugarcane_disease_model.keras` |
 | Soil analysis | **DEMO heuristic** | HSV + graininess scoring | `models/sugarcane_soil_model.keras` (absent) |
 | Assistant | **Rule-based** | Keyword intent matching | n/a |
 
@@ -119,12 +119,32 @@ scores against mismatched columns.
 
 ## 2. Disease detection
 
-### Why it ships in DEMO mode
+### Current status: TRAINED
 
-No labelled sugarcane disease dataset is bundled with this project. Shipping a
-model trained on nothing, or on a handful of scraped images, and calling it a
-disease detector would be dishonest. So the app runs a transparent heuristic and
-labels every result `DEMO`.
+A MobileNetV2 classifier is trained and in use, on a 2,521-image labelled
+sugarcane dataset (see [DATASET_GUIDE.md](DATASET_GUIDE.md)):
+
+| | |
+|---|---|
+| Validation accuracy | **86.31 %** (loss 0.374) |
+| Classes | healthy, mosaic, red_rot, rust, yellow_leaf |
+| Epochs | 23 (15 frozen + 8 fine-tune) |
+| Progression | 64 % → 82 % (phase 1) → 86 % (fine-tuning) |
+
+Random guessing across five classes is 20 %, so the model has learned real
+structure. Read the accuracy as accuracy **on a random split of this dataset** -
+not field-validated diagnostic accuracy. A phone photo in harsh sun is a harder
+problem than a curated dataset image, which is why the UI still shows the
+confidence score, the image-quality assessment, and the reminder to confirm with
+a qualified agricultural expert.
+
+`smut` and `leaf_scald` had no images in the dataset, so the model cannot predict
+them. Their guidance stays in the knowledge base for when images are available.
+
+### The DEMO fallback (still present)
+
+If the model file is missing, the app falls back to a transparent colour and
+texture heuristic and labels every result `DEMO`, rather than failing.
 
 ### What the heuristic actually measures
 
