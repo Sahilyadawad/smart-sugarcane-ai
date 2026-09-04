@@ -1,12 +1,9 @@
 {
   "class_names": [
+    "alluvial",
     "black",
-    "red",
-    "sandy",
     "clay",
-    "loamy"
+    "red"
   ],
-  "note": "These keys must match the keys under 'profiles' in data/soil_profiles.json. train.py rewrites this file from your dataset folder names after training.",
-  "mixed_class": "The 'mixed' result is produced at runtime when confidence falls below the floor in app/ml/soil_model.py, or when the photo looks like vegetation rather than bare soil. It is not a trainable class and must not be a folder in your dataset.",
-  "updated_at": null
+  "updated_at": "2026-09-04T19:47:25+00:00"
 }

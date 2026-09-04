@@ -58,7 +58,7 @@ import type {
   WeatherCondition,
 } from '../types'
 
-const SOIL_TYPES: SoilType[] = ['black', 'red', 'sandy', 'clay', 'loamy', 'mixed']
+const SOIL_TYPES: SoilType[] = ['alluvial', 'black', 'red', 'sandy', 'clay', 'loamy', 'mixed']
 const GROWTH_STAGES: GrowthStage[] = [
   'germination',
   'tillering',

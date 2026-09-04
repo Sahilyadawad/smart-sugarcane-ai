@@ -1,6 +1,6 @@
 /** Shared API types. These mirror the pydantic schemas in backend/app/schemas. */
 
-export type SoilType = 'black' | 'red' | 'sandy' | 'clay' | 'loamy' | 'mixed'
+export type SoilType = 'alluvial' | 'black' | 'red' | 'sandy' | 'clay' | 'loamy' | 'mixed'
 export type GrowthStage =
   | 'germination'
   | 'tillering'

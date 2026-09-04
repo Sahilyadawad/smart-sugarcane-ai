@@ -51,6 +51,7 @@ STAGE_TRIGGER: dict[str, float] = {
 #: are irrigated at a higher moisture reading.
 SOIL_TRIGGER_ADJUST: dict[str, float] = {
     "sandy": 8.0,
+    "alluvial": 2.0,
     "red": 4.0,
     "loamy": 0.0,
     "mixed": 0.0,
@@ -61,6 +62,7 @@ SOIL_TRIGGER_ADJUST: dict[str, float] = {
 #: Total available water (mm) held in a full sugarcane root zone, per soil type.
 TOTAL_AVAILABLE_WATER_MM: dict[str, float] = {
     "sandy": 55.0,
+    "alluvial": 95.0,
     "red": 75.0,
     "loamy": 110.0,
     "mixed": 100.0,

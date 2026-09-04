@@ -1,6 +1,7 @@
 /** Small display helpers shared across pages. */
 
 const LABELS: Record<string, string> = {
+  alluvial: 'Alluvial Soil',
   black: 'Black Soil',
   red: 'Red Soil',
   sandy: 'Sandy Soil',

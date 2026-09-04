@@ -37,7 +37,7 @@ const STAGES: GrowthStage[] = [
   'maturation',
   'ratoon_initiation',
 ]
-const SOILS: SoilType[] = ['black', 'red', 'sandy', 'clay', 'loamy', 'mixed']
+const SOILS: SoilType[] = ['alluvial', 'black', 'red', 'sandy', 'clay', 'loamy', 'mixed']
 const WATER: WaterAvailability[] = ['low', 'medium', 'high']
 
 const PRIORITY_STYLE: Record<string, string> = {

@@ -34,7 +34,7 @@ import type {
   WaterAvailability,
 } from '../types'
 
-const SOILS: SoilType[] = ['black', 'red', 'sandy', 'clay', 'loamy', 'mixed']
+const SOILS: SoilType[] = ['alluvial', 'black', 'red', 'sandy', 'clay', 'loamy', 'mixed']
 const CLIMATES: ClimateType[] = ['unknown', 'tropical', 'subtropical', 'semi_arid']
 const WATER: WaterAvailability[] = ['low', 'medium', 'high']
 const SEASONS: PlantingSeason[] = ['general', 'adsali', 'pre_seasonal', 'suru', 'spring', 'autumn']

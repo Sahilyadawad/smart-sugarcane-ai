@@ -11,19 +11,49 @@
     {
       "id": "co86032",
       "name": "Co 86032",
-      "aliases": ["Nayana"],
+      "aliases": [
+        "Nayana"
+      ],
       "released_by": "ICAR - Sugarcane Breeding Institute, Coimbatore",
       "maturity": "mid_late",
       "duration_months": "12 - 14",
       "water_requirement": "medium",
-      "regions": ["Karnataka", "Maharashtra", "Tamil Nadu", "Andhra Pradesh", "Telangana", "Gujarat", "Peninsular Zone"],
-      "climate": ["tropical", "subtropical"],
-      "soil_suitability": ["black", "red", "loamy", "mixed"],
-      "planting_seasons": ["adsali", "pre_seasonal", "suru", "general"],
+      "regions": [
+        "Karnataka",
+        "Maharashtra",
+        "Tamil Nadu",
+        "Andhra Pradesh",
+        "Telangana",
+        "Gujarat",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical",
+        "subtropical"
+      ],
+      "soil_suitability": [
+        "black",
+        "red",
+        "loamy",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "adsali",
+        "pre_seasonal",
+        "suru",
+        "general"
+      ],
       "ratooning": "Reported to give good ratoon performance",
       "disease_notes": "Generally reported as moderately tolerant to red rot in peninsular conditions. Verify the current local reaction.",
-      "strengths": ["Widely grown peninsular variety", "Good sugar recovery reported", "Good ratoon ability reported"],
-      "cautions": ["Performance varies with local agro-climate", "Confirm current disease reaction with your local research station"],
+      "strengths": [
+        "Widely grown peninsular variety",
+        "Good sugar recovery reported",
+        "Good ratoon ability reported"
+      ],
+      "cautions": [
+        "Performance varies with local agro-climate",
+        "Confirm current disease reaction with your local research station"
+      ],
       "source_note": "Publicly published Indian variety literature. Verify locally."
     },
     {
@@ -34,14 +64,34 @@
       "maturity": "mid_late",
       "duration_months": "12 - 14",
       "water_requirement": "medium",
-      "regions": ["Karnataka", "Belagavi", "Northern Karnataka", "Peninsular Zone"],
-      "climate": ["tropical"],
-      "soil_suitability": ["black", "loamy", "mixed"],
-      "planting_seasons": ["adsali", "pre_seasonal", "suru"],
+      "regions": [
+        "Karnataka",
+        "Belagavi",
+        "Northern Karnataka",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical"
+      ],
+      "soil_suitability": [
+        "black",
+        "loamy",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "adsali",
+        "pre_seasonal",
+        "suru"
+      ],
       "ratooning": "Reported suitable for ratooning in Karnataka conditions",
       "disease_notes": "Bred for northern Karnataka conditions. Confirm the current disease reaction with Sankeshwar / UAS Dharwad.",
-      "strengths": ["Developed for the northern Karnataka belt including the Belagavi region", "Locally adapted"],
-      "cautions": ["Seed availability may be region-limited"],
+      "strengths": [
+        "Developed for the northern Karnataka belt including the Belagavi region",
+        "Locally adapted"
+      ],
+      "cautions": [
+        "Seed availability may be region-limited"
+      ],
       "source_note": "Karnataka state variety literature. Verify with UAS Dharwad."
     },
     {
@@ -52,32 +102,76 @@
       "maturity": "early",
       "duration_months": "10 - 12",
       "water_requirement": "medium",
-      "regions": ["Karnataka", "Belagavi", "Northern Karnataka"],
-      "climate": ["tropical"],
-      "soil_suitability": ["black", "red", "loamy"],
-      "planting_seasons": ["suru", "pre_seasonal"],
+      "regions": [
+        "Karnataka",
+        "Belagavi",
+        "Northern Karnataka"
+      ],
+      "climate": [
+        "tropical"
+      ],
+      "soil_suitability": [
+        "black",
+        "red",
+        "loamy"
+      ],
+      "planting_seasons": [
+        "suru",
+        "pre_seasonal"
+      ],
       "ratooning": "Ratoon performance to be confirmed locally",
       "disease_notes": "Confirm the current disease reaction with your local research station.",
-      "strengths": ["Early maturity option for the Karnataka belt", "Useful for early crushing season supply"],
-      "cautions": ["Early varieties need tighter irrigation scheduling during the formative stage"],
+      "strengths": [
+        "Early maturity option for the Karnataka belt",
+        "Useful for early crushing season supply"
+      ],
+      "cautions": [
+        "Early varieties need tighter irrigation scheduling during the formative stage"
+      ],
       "source_note": "Karnataka state variety literature. Verify with UAS Dharwad."
     },
     {
       "id": "co0238",
       "name": "Co 0238",
-      "aliases": ["Karan 4"],
+      "aliases": [
+        "Karan 4"
+      ],
       "released_by": "ICAR - Sugarcane Breeding Institute, Regional Centre, Karnal",
       "maturity": "early",
       "duration_months": "10 - 12",
       "water_requirement": "medium",
-      "regions": ["Uttar Pradesh", "Haryana", "Punjab", "Uttarakhand", "Bihar", "North West Zone", "North Central Zone"],
-      "climate": ["subtropical"],
-      "soil_suitability": ["loamy", "clay", "mixed"],
-      "planting_seasons": ["spring", "autumn"],
+      "regions": [
+        "Uttar Pradesh",
+        "Haryana",
+        "Punjab",
+        "Uttarakhand",
+        "Bihar",
+        "North West Zone",
+        "North Central Zone"
+      ],
+      "climate": [
+        "subtropical"
+      ],
+      "soil_suitability": [
+        "alluvial",
+        "loamy",
+        "clay",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "spring",
+        "autumn"
+      ],
       "ratooning": "Reported good ratooning in the subtropical belt",
       "disease_notes": "IMPORTANT: increased red rot incidence has been widely reported in parts of North India in recent years. Consult your local cane development office before selecting this variety.",
-      "strengths": ["High sucrose reported in the subtropical belt", "Early maturing"],
-      "cautions": ["Red rot pressure reported in several North Indian districts", "Not a typical peninsular-zone recommendation"],
+      "strengths": [
+        "High sucrose reported in the subtropical belt",
+        "Early maturing"
+      ],
+      "cautions": [
+        "Red rot pressure reported in several North Indian districts",
+        "Not a typical peninsular-zone recommendation"
+      ],
       "source_note": "Publicly published Indian variety literature. Verify locally."
     },
     {
@@ -88,68 +182,156 @@
       "maturity": "early",
       "duration_months": "10 - 12",
       "water_requirement": "high",
-      "regions": ["Maharashtra", "Tamil Nadu", "Karnataka", "Peninsular Zone"],
-      "climate": ["tropical"],
-      "soil_suitability": ["loamy", "black", "mixed"],
-      "planting_seasons": ["adsali", "pre_seasonal", "suru"],
+      "regions": [
+        "Maharashtra",
+        "Tamil Nadu",
+        "Karnataka",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical"
+      ],
+      "soil_suitability": [
+        "loamy",
+        "black",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "adsali",
+        "pre_seasonal",
+        "suru"
+      ],
       "ratooning": "Ratoon performance reported as moderate",
       "disease_notes": "Reported susceptible to red rot in several regions. Use only where the local advisory supports it, and only with healthy certified seed cane.",
-      "strengths": ["Very early maturing", "High sucrose reported"],
-      "cautions": ["Red rot susceptibility reported", "Needs assured irrigation", "Lodging can occur"],
+      "strengths": [
+        "Very early maturing",
+        "High sucrose reported"
+      ],
+      "cautions": [
+        "Red rot susceptibility reported",
+        "Needs assured irrigation",
+        "Lodging can occur"
+      ],
       "source_note": "Publicly published Indian variety literature. Verify locally."
     },
     {
       "id": "co94012",
       "name": "Co 94012",
-      "aliases": ["Phule Savitri"],
+      "aliases": [
+        "Phule Savitri"
+      ],
       "released_by": "Mahatma Phule Krishi Vidyapeeth, Rahuri, Maharashtra",
       "maturity": "mid_late",
       "duration_months": "12 - 15",
       "water_requirement": "medium",
-      "regions": ["Maharashtra", "Karnataka", "Peninsular Zone"],
-      "climate": ["tropical"],
-      "soil_suitability": ["black", "loamy", "clay", "mixed"],
-      "planting_seasons": ["adsali", "pre_seasonal", "suru"],
+      "regions": [
+        "Maharashtra",
+        "Karnataka",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical"
+      ],
+      "soil_suitability": [
+        "black",
+        "loamy",
+        "clay",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "adsali",
+        "pre_seasonal",
+        "suru"
+      ],
       "ratooning": "Reported good ratooning",
       "disease_notes": "Confirm the current field reaction with MPKV Rahuri or your local station.",
-      "strengths": ["Popular Maharashtra variety", "Suited to heavy black soils"],
-      "cautions": ["Longer duration - plan irrigation and nutrition across a longer crop cycle"],
+      "strengths": [
+        "Popular Maharashtra variety",
+        "Suited to heavy black soils"
+      ],
+      "cautions": [
+        "Longer duration - plan irrigation and nutrition across a longer crop cycle"
+      ],
       "source_note": "Maharashtra state variety literature. Verify locally."
     },
     {
       "id": "com0265",
       "name": "CoM 0265",
-      "aliases": ["Phule Sugarcane 265"],
+      "aliases": [
+        "Phule Sugarcane 265"
+      ],
       "released_by": "Mahatma Phule Krishi Vidyapeeth, Rahuri, Maharashtra",
       "maturity": "mid_late",
       "duration_months": "12 - 15",
       "water_requirement": "medium",
-      "regions": ["Maharashtra", "Karnataka", "Peninsular Zone"],
-      "climate": ["tropical"],
-      "soil_suitability": ["black", "clay", "loamy"],
-      "planting_seasons": ["adsali", "pre_seasonal", "suru"],
+      "regions": [
+        "Maharashtra",
+        "Karnataka",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical"
+      ],
+      "soil_suitability": [
+        "black",
+        "clay",
+        "loamy"
+      ],
+      "planting_seasons": [
+        "adsali",
+        "pre_seasonal",
+        "suru"
+      ],
       "ratooning": "Reported good ratooning",
       "disease_notes": "Confirm the current field reaction locally.",
-      "strengths": ["Reported to perform on heavy soils", "Widely planted in western Maharashtra"],
-      "cautions": ["Verify seed source and purity"],
+      "strengths": [
+        "Reported to perform on heavy soils",
+        "Widely planted in western Maharashtra"
+      ],
+      "cautions": [
+        "Verify seed source and purity"
+      ],
       "source_note": "Maharashtra state variety literature. Verify locally."
     },
     {
       "id": "co8371",
       "name": "Co 8371",
-      "aliases": ["Bhima"],
+      "aliases": [
+        "Bhima"
+      ],
       "released_by": "ICAR - Sugarcane Breeding Institute network",
       "maturity": "mid_late",
       "duration_months": "12 - 14",
       "water_requirement": "medium",
-      "regions": ["Andhra Pradesh", "Telangana", "Karnataka", "Maharashtra", "Peninsular Zone"],
-      "climate": ["tropical"],
-      "soil_suitability": ["red", "loamy", "black", "mixed"],
-      "planting_seasons": ["pre_seasonal", "suru", "general"],
+      "regions": [
+        "Andhra Pradesh",
+        "Telangana",
+        "Karnataka",
+        "Maharashtra",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical"
+      ],
+      "soil_suitability": [
+        "red",
+        "loamy",
+        "black",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "pre_seasonal",
+        "suru",
+        "general"
+      ],
       "ratooning": "Reported fair to good ratooning",
       "disease_notes": "Confirm the current field reaction locally.",
-      "strengths": ["Adapted to red and lighter soils in parts of the peninsular zone"],
-      "cautions": ["Older variety - newer releases may outperform it locally"],
+      "strengths": [
+        "Adapted to red and lighter soils in parts of the peninsular zone"
+      ],
+      "cautions": [
+        "Older variety - newer releases may outperform it locally"
+      ],
       "source_note": "Publicly published Indian variety literature. Verify locally."
     },
     {
@@ -160,14 +342,33 @@
       "maturity": "mid_late",
       "duration_months": "12 - 14",
       "water_requirement": "medium",
-      "regions": ["Karnataka", "Tamil Nadu", "Peninsular Zone"],
-      "climate": ["tropical"],
-      "soil_suitability": ["red", "loamy", "mixed", "sandy"],
-      "planting_seasons": ["pre_seasonal", "suru", "general"],
+      "regions": [
+        "Karnataka",
+        "Tamil Nadu",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical"
+      ],
+      "soil_suitability": [
+        "red",
+        "loamy",
+        "mixed",
+        "sandy"
+      ],
+      "planting_seasons": [
+        "pre_seasonal",
+        "suru",
+        "general"
+      ],
       "ratooning": "Ratoon performance to be confirmed locally",
       "disease_notes": "Confirm the current field reaction locally.",
-      "strengths": ["Option for lighter and red soils"],
-      "cautions": ["Lighter soils need more frequent, smaller irrigations"],
+      "strengths": [
+        "Option for lighter and red soils"
+      ],
+      "cautions": [
+        "Lighter soils need more frequent, smaller irrigations"
+      ],
       "source_note": "Publicly published Indian variety literature. Verify locally."
     },
     {
@@ -178,50 +379,117 @@
       "maturity": "early",
       "duration_months": "10 - 12",
       "water_requirement": "low",
-      "regions": ["Tamil Nadu", "Karnataka", "Andhra Pradesh", "Peninsular Zone"],
-      "climate": ["tropical", "semi_arid"],
-      "soil_suitability": ["red", "sandy", "loamy", "mixed"],
-      "planting_seasons": ["suru", "general"],
+      "regions": [
+        "Tamil Nadu",
+        "Karnataka",
+        "Andhra Pradesh",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical",
+        "semi_arid"
+      ],
+      "soil_suitability": [
+        "red",
+        "sandy",
+        "loamy",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "suru",
+        "general"
+      ],
       "ratooning": "Ratoon performance to be confirmed locally",
       "disease_notes": "Confirm the current field reaction locally.",
-      "strengths": ["Reported as a comparatively less water-demanding early option"],
-      "cautions": ["Yield potential depends heavily on nutrition and seed quality"],
+      "strengths": [
+        "Reported as a comparatively less water-demanding early option"
+      ],
+      "cautions": [
+        "Yield potential depends heavily on nutrition and seed quality"
+      ],
       "source_note": "Publicly published Indian variety literature. Verify locally."
     },
     {
       "id": "co0118",
       "name": "Co 0118",
-      "aliases": ["Karan 2"],
+      "aliases": [
+        "Karan 2"
+      ],
       "released_by": "ICAR - Sugarcane Breeding Institute, Regional Centre, Karnal",
       "maturity": "mid_late",
       "duration_months": "12 - 14",
       "water_requirement": "medium",
-      "regions": ["Uttar Pradesh", "Haryana", "Punjab", "Uttarakhand", "North West Zone"],
-      "climate": ["subtropical"],
-      "soil_suitability": ["loamy", "clay", "mixed"],
-      "planting_seasons": ["spring", "autumn"],
+      "regions": [
+        "Uttar Pradesh",
+        "Haryana",
+        "Punjab",
+        "Uttarakhand",
+        "North West Zone"
+      ],
+      "climate": [
+        "subtropical"
+      ],
+      "soil_suitability": [
+        "alluvial",
+        "loamy",
+        "clay",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "spring",
+        "autumn"
+      ],
       "ratooning": "Reported good ratooning in the subtropical belt",
       "disease_notes": "Confirm the current field reaction with your local cane development office.",
-      "strengths": ["Subtropical mid-late option", "Used as an alternative in red-rot affected belts"],
-      "cautions": ["Not a typical peninsular-zone recommendation"],
+      "strengths": [
+        "Subtropical mid-late option",
+        "Used as an alternative in red-rot affected belts"
+      ],
+      "cautions": [
+        "Not a typical peninsular-zone recommendation"
+      ],
       "source_note": "Publicly published Indian variety literature. Verify locally."
     },
     {
       "id": "co11015",
       "name": "Co 11015",
-      "aliases": ["Atulya"],
+      "aliases": [
+        "Atulya"
+      ],
       "released_by": "ICAR - Sugarcane Breeding Institute, Coimbatore",
       "maturity": "mid_late",
       "duration_months": "12 - 14",
       "water_requirement": "medium",
-      "regions": ["Tamil Nadu", "Karnataka", "Andhra Pradesh", "Maharashtra", "Peninsular Zone"],
-      "climate": ["tropical"],
-      "soil_suitability": ["loamy", "black", "red", "mixed"],
-      "planting_seasons": ["pre_seasonal", "suru", "general"],
+      "regions": [
+        "Tamil Nadu",
+        "Karnataka",
+        "Andhra Pradesh",
+        "Maharashtra",
+        "Peninsular Zone"
+      ],
+      "climate": [
+        "tropical"
+      ],
+      "soil_suitability": [
+        "loamy",
+        "black",
+        "red",
+        "mixed"
+      ],
+      "planting_seasons": [
+        "pre_seasonal",
+        "suru",
+        "general"
+      ],
       "ratooning": "Reported good ratooning",
       "disease_notes": "Newer release - collect current local field reaction data before large-scale planting.",
-      "strengths": ["Newer peninsular release", "Reported good cane yield potential"],
-      "cautions": ["Seed availability may be limited in some districts"],
+      "strengths": [
+        "Newer peninsular release",
+        "Reported good cane yield potential"
+      ],
+      "cautions": [
+        "Seed availability may be limited in some districts"
+      ],
       "source_note": "Publicly published Indian variety literature. Verify locally."
     }
   ]

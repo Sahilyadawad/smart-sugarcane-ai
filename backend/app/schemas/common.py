@@ -6,6 +6,7 @@ from enum import Enum
 
 
 class SoilType(str, Enum):
+    alluvial = "alluvial"
     black = "black"
     red = "red"
     sandy = "sandy"
@@ -86,6 +87,7 @@ class ModelMode(str, Enum):
 
 HUMAN_LABELS: dict[str, str] = {
     # soil
+    "alluvial": "Alluvial Soil",
     "black": "Black Soil",
     "red": "Red Soil",
     "sandy": "Sandy Soil",

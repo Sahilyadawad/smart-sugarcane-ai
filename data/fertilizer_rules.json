@@ -2,13 +2,21 @@
   "schema_version": "1.0",
   "last_reviewed": "2026-08-20",
   "data_disclaimer": "This rule base produces QUALITATIVE nutrient guidance only - which nutrients deserve attention at which stage, and how to time applications. It deliberately contains NO fixed fertilizer quantities, NO product names and NO chemical dosages, because correct quantities depend on your soil test, your variety, your yield target and your state's recommendation. For exact fertilizer quantities and chemical products, use a laboratory soil test and consult your local agricultural extension recommendations.",
-  "priority_scale": ["low", "medium", "high"],
+  "priority_scale": [
+    "low",
+    "medium",
+    "high"
+  ],
   "growth_stages": {
     "germination": {
       "label": "Germination / Establishment",
       "typical_window": "Roughly 0 to 45 days after planting",
       "goal": "Get uniform sprouting and a healthy root system started.",
-      "nutrient_priority": { "nitrogen": "medium", "phosphorus": "high", "potassium": "low" },
+      "nutrient_priority": {
+        "nitrogen": "medium",
+        "phosphorus": "high",
+        "potassium": "low"
+      },
       "focus": "Root development and uniform sprouting. Phosphorus availability at planting matters most here.",
       "practices": [
         "Apply the basal dose at planting as advised by your local recommendation",
@@ -22,7 +30,11 @@
       "label": "Tillering",
       "typical_window": "Roughly 45 to 120 days after planting",
       "goal": "Produce a good number of healthy tillers that will become millable canes.",
-      "nutrient_priority": { "nitrogen": "high", "phosphorus": "medium", "potassium": "medium" },
+      "nutrient_priority": {
+        "nitrogen": "high",
+        "phosphorus": "medium",
+        "potassium": "medium"
+      },
       "focus": "Nitrogen drives tiller production. This is the stage where nitrogen response is usually strongest.",
       "practices": [
         "Apply the first top-dressing split during early tillering",
@@ -36,7 +48,11 @@
       "label": "Grand Growth / Elongation",
       "typical_window": "Roughly 120 to 270 days after planting",
       "goal": "Maximise cane elongation and internode formation. This is the peak water and nutrient demand period.",
-      "nutrient_priority": { "nitrogen": "high", "phosphorus": "low", "potassium": "high" },
+      "nutrient_priority": {
+        "nitrogen": "high",
+        "phosphorus": "low",
+        "potassium": "high"
+      },
       "focus": "Nitrogen for growth and potassium for stalk strength and water regulation. Water demand peaks here.",
       "practices": [
         "Complete the remaining nitrogen splits by the end of this stage",
@@ -51,7 +67,11 @@
       "label": "Maturation / Ripening",
       "typical_window": "Roughly 270 days to harvest",
       "goal": "Let sugar accumulate in the cane. Growth should slow down deliberately.",
-      "nutrient_priority": { "nitrogen": "low", "phosphorus": "low", "potassium": "medium" },
+      "nutrient_priority": {
+        "nitrogen": "low",
+        "phosphorus": "low",
+        "potassium": "medium"
+      },
       "focus": "Stop nitrogen. Late nitrogen keeps the crop vegetative and reduces sucrose recovery.",
       "practices": [
         "Do not apply nitrogen during ripening",
@@ -65,7 +85,11 @@
       "label": "Ratoon Initiation",
       "typical_window": "Immediately after harvest of the previous crop",
       "goal": "Get uniform ratoon sprouting from healthy stubble.",
-      "nutrient_priority": { "nitrogen": "high", "phosphorus": "medium", "potassium": "medium" },
+      "nutrient_priority": {
+        "nitrogen": "high",
+        "phosphorus": "medium",
+        "potassium": "medium"
+      },
       "focus": "A ratoon crop generally needs prompt nutrition because it starts from an already depleted soil.",
       "practices": [
         "Stubble shave and gap fill promptly after harvest",
@@ -159,20 +183,69 @@
       "organic_matter_note": "Adding well-decomposed organic matter is safe and beneficial in almost every soil.",
       "split_note": "Use a moderate number of splits as a safe default.",
       "drainage_flag": "Check drainage by hand after an irrigation to see how quickly water disappears."
+    },
+    "alluvial": {
+      "label": "Alluvial Soil",
+      "notes": [
+        "Generally fertile but variable in texture across a single field",
+        "Usually adequate in potassium and lime, low in nitrogen and organic matter",
+        "Good natural drainage in most variants"
+      ],
+      "nitrogen_note": "Nitrogen is usually the limiting nutrient here. Split the dose across the season.",
+      "phosphorus_note": "Often responsive to phosphorus. A soil test is worthwhile before deciding.",
+      "potassium_note": "Frequently adequate. Confirm with a soil test before adding more.",
+      "organic_matter_note": "Continuous cropping depletes organic matter quickly in alluvium. Add compost or green manure each season.",
+      "split_note": "Standard split schedule works; use more splits on the sandier patches.",
+      "drainage_flag": "Generally good, but check low-lying parts of the field after heavy rain."
     }
   },
   "npk_test_rating": {
     "note": "These are SOIL TEST RATING CLASSES used by many Indian soil testing laboratories, expressed in kg/ha of available nutrient. They classify a soil test value as low, medium or high. They are NOT fertilizer dose recommendations. Rating boundaries vary between states and laboratories - use the classes printed on your own soil health card where available.",
-    "nitrogen": { "unit": "kg/ha available N", "low": "below 280", "medium": "280 to 560", "high": "above 560" },
-    "phosphorus": { "unit": "kg/ha available P2O5", "low": "below 10", "medium": "10 to 25", "high": "above 25" },
-    "potassium": { "unit": "kg/ha available K2O", "low": "below 110", "medium": "110 to 280", "high": "above 280" }
+    "nitrogen": {
+      "unit": "kg/ha available N",
+      "low": "below 280",
+      "medium": "280 to 560",
+      "high": "above 560"
+    },
+    "phosphorus": {
+      "unit": "kg/ha available P2O5",
+      "low": "below 10",
+      "medium": "10 to 25",
+      "high": "above 25"
+    },
+    "potassium": {
+      "unit": "kg/ha available K2O",
+      "low": "below 110",
+      "medium": "110 to 280",
+      "high": "above 280"
+    }
   },
   "ph_guidance": [
-    { "band": "below 5.5", "label": "Strongly acidic", "note": "Nutrient availability is restricted and aluminium toxicity is possible. Discuss liming with your extension officer based on a soil test." },
-    { "band": "5.5 to 6.5", "label": "Slightly acidic", "note": "Generally workable for sugarcane. Monitor and maintain organic matter." },
-    { "band": "6.5 to 7.5", "label": "Near neutral", "note": "Favourable range for sugarcane nutrient availability." },
-    { "band": "7.5 to 8.5", "label": "Slightly alkaline", "note": "Phosphorus, zinc and iron availability can drop. Watch for micronutrient deficiency symptoms." },
-    { "band": "above 8.5", "label": "Strongly alkaline / possible sodicity", "note": "Get a full soil test including electrical conductivity and exchangeable sodium. Amendment decisions need laboratory data." }
+    {
+      "band": "below 5.5",
+      "label": "Strongly acidic",
+      "note": "Nutrient availability is restricted and aluminium toxicity is possible. Discuss liming with your extension officer based on a soil test."
+    },
+    {
+      "band": "5.5 to 6.5",
+      "label": "Slightly acidic",
+      "note": "Generally workable for sugarcane. Monitor and maintain organic matter."
+    },
+    {
+      "band": "6.5 to 7.5",
+      "label": "Near neutral",
+      "note": "Favourable range for sugarcane nutrient availability."
+    },
+    {
+      "band": "7.5 to 8.5",
+      "label": "Slightly alkaline",
+      "note": "Phosphorus, zinc and iron availability can drop. Watch for micronutrient deficiency symptoms."
+    },
+    {
+      "band": "above 8.5",
+      "label": "Strongly alkaline / possible sodicity",
+      "note": "Get a full soil test including electrical conductivity and exchangeable sodium. Amendment decisions need laboratory data."
+    }
   ],
   "organic_matter_guidance": {
     "low": "Prioritise well-decomposed farmyard manure, compost, press mud or green manure. Organic matter improves structure, water retention and nutrient buffering.",

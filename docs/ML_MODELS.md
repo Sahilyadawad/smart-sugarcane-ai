@@ -10,7 +10,7 @@ What is actually running, how accurate it really is, and how to replace it.
 |---|---|---|---|
 | Irrigation | Rule engine → **trained model** after one command | `RandomForestRegressor` + `RandomForestClassifier` | `models/irrigation_model.joblib` |
 | Disease detection | ✅ **Trained model** | MobileNetV2 transfer learning, 86.3 % val accuracy | `models/sugarcane_disease_model.keras` |
-| Soil analysis | **DEMO heuristic** | HSV + graininess scoring | `models/sugarcane_soil_model.keras` (absent) |
+| Soil analysis | ✅ **Trained model** | MobileNetV2, 89.6 % val accuracy | `models/sugarcane_soil_model.keras` |
 | Assistant | **Rule-based** | Keyword intent matching | n/a |
 
 ```bash
@@ -229,26 +229,50 @@ Outputs `models/sugarcane_disease_model.keras` and
 
 ## 3. Soil analysis
 
-Same two-mode design. The demo scores five classes with a **weighted mean of
-membership functions** over hue, saturation, brightness and graininess.
+### Current status: TRAINED — with an important caveat about the data
 
-A weighted *mean* rather than a sum of bonuses matters: with a sum, a near-black
-soil was scored as clay because "smooth" and "low saturation" both paid out
-while the brightness criterion merely contributed nothing. A mean lets a failed
-criterion drag the whole score down.
+A MobileNetV2 classifier is trained and in use: **89.55 % validation accuracy**
+over 4 classes (`alluvial`, `black`, `clay`, `red`).
 
-Thresholds live in `_CRITERIA` in `backend/app/ml/soil_model.py`, and the
-descriptive text in `data/soil_profiles.json`. Both are editable.
+**Read that number sceptically.** The source archive contained 1,563 files but
+only **672 unique images** — 57 % were byte-identical duplicates. Worse, its
+supplied train/test split was useless: **every single one of the 341 "test"
+images also appeared in the training folder**, so evaluating on it would have
+reported a meaningless near-perfect score. One image was filed under two
+different labels and was dropped.
+
+The model was therefore trained on the deduplicated set with a fresh split:
+
+| Class | Unique images |
+|---|---|
+| alluvial | 281 |
+| black | 122 |
+| clay | 114 |
+| red | 155 |
+
+Two consequences worth stating plainly:
+
+* **Small and imbalanced.** 114 images for clay is at the bottom of the usable
+  range, and alluvial has 2.5x more examples than clay.
+* **Web-sourced, not field-collected.** These are largely internet images, so
+  the model may be keying partly on photographic style rather than on soil. It
+  has not been tested against phone photos of a real field.
+
+`sandy` and `loamy` had no images, so the model cannot predict them. They remain
+selectable manually and in the knowledge base.
 
 ### The permanent limitation
 
-Even a perfectly trained soil model classifies **appearance**. It cannot measure
-NPK, pH, electrical conductivity or micronutrients — and the app keeps saying so
-after you train one, because that limitation is physical, not a software gap.
+None of this changes what the module can honestly tell a farmer. Even a perfect
+model classifies soil **appearance**. It cannot measure NPK, pH, electrical
+conductivity or micronutrients - that is physics, not a modelling gap - so the
+app still shows "laboratory soil testing provides accurate nutrient and pH
+values" on every result.
 
-Note also that the same soil looks two shades darker when wet, which is why the
-soil augmentation is **geometry-only** — no brightness or contrast jitter, since
-that would teach the model that lighting is the label.
+### The DEMO fallback (still present)
+
+If the model file is missing, the app falls back to a weighted HSV + graininess
+heuristic, labelled `DEMO visual estimate`.
 
 ---
 
