@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext'
 import { describeError } from '../services/api'
 import { authApi } from '../services/endpoints'
 import { Alert, Field, Spinner } from '../components/ui'
+import { ServerAddress } from '../components/ServerAddress'
 
 export default function Login() {
   const { login } = useAuth()
@@ -73,6 +74,8 @@ export default function Login() {
               <Alert tone="danger">{error}</Alert>
             </div>
           )}
+
+          <ServerAddress highlight={Boolean(error)} />
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <Field label="Email address" htmlFor="email">

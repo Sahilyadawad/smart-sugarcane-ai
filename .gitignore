@@ -72,3 +72,10 @@ desktop.ini
 
 # Local dev-server launch config used by tooling
 .claude/
+
+# Android build output (Capacitor keeps its own .gitignore for the rest)
+frontend/android/app/build/
+frontend/android/build/
+frontend/android/.gradle/
+frontend/android/local.properties
+frontend/.env.android

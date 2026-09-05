@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { describeError } from '../services/api'
 import { Alert, Field, Spinner } from '../components/ui'
+import { ServerAddress } from '../components/ServerAddress'
 
 export default function Register() {
   const { register } = useAuth()
@@ -81,6 +82,8 @@ export default function Register() {
               <Alert tone="danger">{error}</Alert>
             </div>
           )}
+
+          <ServerAddress highlight={Boolean(error)} />
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <Field label="Full name" htmlFor="name">

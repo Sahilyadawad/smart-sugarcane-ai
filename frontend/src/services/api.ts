@@ -4,8 +4,54 @@ import type { ImageValidation } from '../types'
 // 127.0.0.1 rather than localhost: on Windows `localhost` resolves to ::1 (IPv6)
 // before 127.0.0.1, but uvicorn binds IPv4 only by default, so the browser's
 // first connection attempt is refused.
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || 'http://127.0.0.1:8000/api'
+const SERVER_KEY = 'ssai.serverAddress'
+
+/**
+ * Where the backend lives, resolved at runtime.
+ *
+ * The build-time value is only a default. In the packaged Android app the
+ * laptop's address is whatever the current network hands out, and that changed
+ * three times during testing - each change would otherwise mean rebuilding the
+ * APK. A value saved under `ssai.serverAddress` wins, so the address can be
+ * corrected inside the app instead.
+ *
+ * Accepts "192.168.1.5", "192.168.1.5:8000" or a full URL, and always returns
+ * an origin with the `/api` suffix.
+ */
+export function normaliseServerAddress(input: string): string {
+  const raw = input.trim().replace(/\/+$/, '')
+  if (!raw) return ''
+  const withScheme = /^https?:\/\//i.test(raw) ? raw : `http://${raw}`
+  const url = new URL(withScheme)
+  if (!url.port && !/^https:/i.test(withScheme)) url.port = '8000'
+  return `${url.protocol}//${url.host}/api`
+}
+
+export const serverAddressStore = {
+  get: () => {
+    try {
+      return localStorage.getItem(SERVER_KEY)
+    } catch {
+      return null
+    }
+  },
+  set: (value: string) => {
+    const resolved = normaliseServerAddress(value)
+    localStorage.setItem(SERVER_KEY, resolved)
+    return resolved
+  },
+  clear: () => localStorage.removeItem(SERVER_KEY),
+}
+
+function resolveApiBase(): string {
+  const saved = serverAddressStore.get()
+  if (saved) return saved
+  return (
+    import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || 'http://127.0.0.1:8000/api'
+  )
+}
+
+export const API_BASE_URL = resolveApiBase()
 
 /** Uploaded images are served from the backend root, not under /api. */
 export const MEDIA_BASE_URL =
@@ -94,7 +140,11 @@ export function describeError(error: unknown, fallback = 'Something went wrong.'
       return 'The request timed out. The backend may still be starting up.'
     }
     if (!error.response) {
-      return `Cannot reach the backend at ${API_BASE_URL}. Is it running? Start it with: uvicorn app.main:app --reload`
+      return (
+        `Cannot reach the server at ${API_BASE_URL}. Check that the computer running ` +
+        `the backend is switched on, that this device is on the same Wi-Fi network, ` +
+        `and that the address below is correct.`
+      )
     }
     return error.message || fallback
   }
