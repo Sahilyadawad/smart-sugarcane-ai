@@ -18,6 +18,15 @@ import tensorflow as tf
 REPO = Path(__file__).resolve().parents[2]
 EXT = {".jpg", ".jpeg", ".png", ".bmp"}
 
+def _resolve(relative: str) -> Path:
+    """Locate a dataset folder without hard-coding one machine's layout."""
+    for base in (REPO / "datasets", REPO.parent / "datasets"):
+        candidate = base / relative
+        if candidate.exists():
+            return candidate
+    return REPO / "datasets" / relative
+
+
 
 def load(path: Path, size: int) -> np.ndarray:
     raw = tf.io.read_file(str(path))
@@ -37,7 +46,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--model", type=Path, default=REPO / "models" / "sugarcane_validator_model.keras")
     ap.add_argument("--meta", type=Path, default=REPO / "models" / "validator_model_meta.json")
-    ap.add_argument("--holdout", type=Path, default=Path(r"C:\Users\Hp\datasets\sugarcane_validator\holdout"))
+    ap.add_argument("--holdout", type=Path, default=_resolve("sugarcane_validator/holdout"))
     ap.add_argument("--limit", type=int, default=0, help="cap images per class (0 = all)")
     args = ap.parse_args()
 
@@ -64,7 +73,7 @@ def main() -> None:
     print(f"\n  overall         {got / n * 100:6.1f} %   ({got}/{n})")
 
     # The decisive test: maize, held out from the source dataset directly.
-    corn = Path(r"C:\Users\Hp\datasets\corn")
+    corn = _resolve("corn")
     files = [f for f in corn.rglob("*") if f.suffix.lower() in EXT]
     trained_names = {f.name for f in (args.holdout / "not_sugarcane").iterdir()}
     import hashlib

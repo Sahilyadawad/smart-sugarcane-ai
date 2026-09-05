@@ -2,7 +2,7 @@
 
 This exists because an earlier "16/16 correct" spot check was run on images
 drawn from the training set, which proves nothing about generalisation. This
-script only ever reads C:/Users/Hp/datasets/soil/holdout, which train.py never
+script only ever reads the holdout directory, which train.py never
 touches, and optionally any loose real-world photos passed on the command line.
 """
 
@@ -18,15 +18,37 @@ import tensorflow as tf
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_MODEL = REPO / "models" / "sugarcane_soil_model.keras"
 DEFAULT_META = REPO / "models" / "soil_model_meta.json"
-DEFAULT_HOLDOUT = Path(r"C:\Users\Hp\datasets\soil\holdout")
+# Resolved relative to the project so this runs on any machine, whether the
+# datasets sit inside the project folder or beside it.
+def _default_holdout() -> Path:
+    for candidate in (
+        REPO / "datasets" / "soil" / "holdout",
+        REPO.parent / "datasets" / "soil" / "holdout",
+    ):
+        if candidate.exists():
+            return candidate
+    return REPO / "datasets" / "soil" / "holdout"
+
+
+DEFAULT_HOLDOUT = _default_holdout()
 SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".gif"}
 
 
 def load_image(path: Path, size: int) -> np.ndarray:
-    raw = tf.io.read_file(str(path))
-    image = tf.io.decode_image(raw, channels=3, expand_animations=False)
-    image = tf.image.resize(image, (size, size))
-    return tf.cast(image, tf.float32).numpy()
+    """Resize exactly the way the backend does, so this measures what ships.
+
+    An earlier version used tf.image.resize with its default aliased bilinear
+    filter, matching how image_dataset_from_directory prepared the training
+    data. That understated the model by four points - 89.0 % here against
+    93.0 % in the application - because the backend resizes with Pillow's
+    antialiased BILINEAR, which does not sharpen the grain on a large field
+    photograph. An evaluation that does not use the serving path is measuring
+    a model nobody runs.
+    """
+    from PIL import Image  # noqa: PLC0415
+
+    image = Image.open(path).convert("RGB").resize((size, size), Image.Resampling.BILINEAR)
+    return np.asarray(image, dtype=np.float32)
 
 
 def main() -> None:
