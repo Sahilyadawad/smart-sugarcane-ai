@@ -10,6 +10,7 @@ import type {
   HistoryDetail,
   HistoryPage,
   ImageModelStatus,
+  ImageValidation,
   IrrigationChartPoint,
   IrrigationInput,
   IrrigationModelStatus,
@@ -97,6 +98,16 @@ export const plantApi = {
       .then((r) => r.data)
   },
 
+  validateImage: (file: File) => {
+    const form = new FormData()
+    form.append('file', file)
+    return api
+      .post<ImageValidation>('/plants/validate', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((r) => r.data)
+  },
+
   trend: (limit = 12) =>
     api.get<PlantTrend>('/plants/trend', { params: { limit } }).then((r) => r.data),
 
@@ -127,6 +138,16 @@ export const soilApi = {
     form.append('save', 'true')
     return api
       .post<SoilAnalysisResult>('/soil/analyze', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((r) => r.data)
+  },
+
+  validateImage: (file: File) => {
+    const form = new FormData()
+    form.append('file', file)
+    return api
+      .post<ImageValidation>('/soil/validate', form, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       .then((r) => r.data)

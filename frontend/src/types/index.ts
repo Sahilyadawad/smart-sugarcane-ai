@@ -417,3 +417,28 @@ export interface SystemStatus {
   knowledge_base: Record<string, { loaded: boolean; schema_version?: string }>
   honesty_notice: string
 }
+
+/** Result of the pre-analysis image gate (see backend/app/ml/image_validation.py). */
+export interface ImageValidation {
+  isSugarcane: boolean
+  confidence: number
+  imageType:
+    | 'sugarcane_plant'
+    | 'other_plant'
+    | 'plant_unverified'
+    | 'soil_only'
+    | 'soil'
+    | 'not_soil'
+    | 'plant_photo'
+    | 'unclear_soil'
+    | 'not_a_plant'
+    | 'unclear'
+  /** Headline for the notice, e.g. "Invalid Image - Please upload only a soil photo." */
+  title: string
+  message: string
+  stage: 'A' | 'B'
+  checked_by: 'rule_engine' | 'trained_model'
+  notes: string[]
+  scores?: Record<string, number>
+  profile?: Record<string, number>
+}

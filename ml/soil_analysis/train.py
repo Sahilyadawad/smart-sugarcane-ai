@@ -63,13 +63,19 @@ def main() -> None:
     args = parse_args()
 
     try:
+        import numpy as np
         import tensorflow as tf
     except ImportError as exc:
         raise SystemExit(
             "TensorFlow is not installed.\n  pip install -r ml/disease_detection/requirements.txt"
         ) from exc
 
-    from model import build_model, compile_model, unfreeze_for_finetuning  # noqa: PLC0415
+    from model import (  # noqa: PLC0415
+        build_model,
+        compile_model,
+        export_inference_model,
+        unfreeze_for_finetuning,
+    )
 
     if not args.data_dir.exists():
         raise SystemExit(
@@ -133,7 +139,27 @@ def main() -> None:
     ]
 
     print("\nPHASE 1 - classifier head (backbone frozen)")
-    history = model.fit(train_ds, validation_data=val_ds, epochs=args.epochs, callbacks=callbacks)
+    # Counter class imbalance. Without this the model drifts toward whichever
+    # class has the most examples: with alluvial at 281 images and clay at 114,
+    # it learned to answer "alluvial" whenever it was unsure, which is exactly
+    # what it did on real uploads.
+    total_images = sum(counts.values())
+    class_weight = {
+        index: total_images / (len(class_names) * counts[name])
+        for index, name in enumerate(class_names)
+    }
+    print()
+    print("Class weights (correcting for imbalance):")
+    for index, name in enumerate(class_names):
+        print(f"  {name:<10} {counts[name]:>4} images   weight {class_weight[index]:.2f}")
+
+    history = model.fit(
+        train_ds,
+        validation_data=val_ds,
+        epochs=args.epochs,
+        callbacks=callbacks,
+        class_weight=class_weight,
+    )
 
     if args.fine_tune_epochs > 0:
         unfrozen = unfreeze_for_finetuning(base, model, learning_rate=args.fine_tune_lr)
@@ -144,6 +170,7 @@ def main() -> None:
             epochs=args.epochs + args.fine_tune_epochs,
             initial_epoch=len(history.history["loss"]),
             callbacks=callbacks,
+            class_weight=class_weight,
         )
         for key, values in fine_history.history.items():
             history.history.setdefault(key, []).extend(values)
@@ -151,7 +178,36 @@ def main() -> None:
     loss, accuracy = model.evaluate(val_ds, verbose=0)
     print(f"\nFinal validation accuracy: {accuracy * 100:.2f} %   (loss {loss:.4f})")
 
-    model.save(args.output)
+    # A single accuracy figure hides which classes actually work. Print the full
+    # confusion matrix so a class the model never predicts is impossible to miss.
+    y_true: list[int] = []
+    y_pred: list[int] = []
+    for batch_images, batch_labels in val_ds:
+        y_true.extend(batch_labels.numpy().tolist())
+        y_pred.extend(np.argmax(model.predict(batch_images, verbose=0), axis=1).tolist())
+
+    size = len(class_names)
+    matrix = [[0] * size for _ in range(size)]
+    for actual, predicted in zip(y_true, y_pred):
+        matrix[actual][predicted] += 1
+
+    print()
+    print("Confusion matrix on held-out validation images (rows = actual):")
+    print(" " * 12 + "".join(f"{name[:8]:>10}" for name in class_names))
+    per_class_recall = {}
+    for index, name in enumerate(class_names):
+        row = matrix[index]
+        recall = row[index] / max(sum(row), 1)
+        per_class_recall[name] = round(float(recall), 4)
+        cells = "".join(f"{value:>10}" for value in row)
+        print(f"  {name:<10}" + cells + f"    recall {recall * 100:5.1f} %")
+
+    # Save a graph with no custom layers, so the backend can load it anywhere.
+    export, copied = export_inference_model(
+        model, num_classes=len(class_names), input_size=image_size, backbone=args.backbone
+    )
+    print(f"Exporting inference model without augmentation ({copied} weighted layers copied)")
+    export.save(args.output)
 
     meta = {
         "class_names": class_names,
@@ -163,6 +219,7 @@ def main() -> None:
         "val_loss": round(float(loss), 4),
         "epochs_run": len(history.history["loss"]),
         "images_per_class": counts,
+        "per_class_recall": per_class_recall,
         "dataset_path": str(args.data_dir),
         "tensorflow_version": tf.__version__,
         "honesty_note": (

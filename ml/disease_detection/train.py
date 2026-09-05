@@ -49,6 +49,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data-dir", type=Path, required=True, help="dataset root, one subfolder per class")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    # Explicit so this script can train other classifiers (the sugarcane
+    # image validator) without clobbering the disease model metadata.
+    parser.add_argument("--meta", type=Path, default=None)
+    parser.add_argument("--class-names-file", type=Path, default=None)
     parser.add_argument("--backbone", default="mobilenetv2", choices=["mobilenetv2", "efficientnetb0", "resnet50"])
     parser.add_argument("--image-size", type=int, default=224)
     parser.add_argument("--batch-size", type=int, default=32)
@@ -187,16 +191,18 @@ def main() -> None:
             "treatment decisions with a qualified agricultural expert."
         ),
     }
-    DEFAULT_META.parent.mkdir(parents=True, exist_ok=True)
-    DEFAULT_META.write_text(json.dumps(meta, indent=2), encoding="utf-8")
-    CLASS_NAMES_FILE.write_text(
+    meta_path = args.meta or DEFAULT_META
+    class_names_path = args.class_names_file or CLASS_NAMES_FILE
+    meta_path.parent.mkdir(parents=True, exist_ok=True)
+    meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    class_names_path.write_text(
         json.dumps({"class_names": class_names, "updated_at": meta["trained_at"]}, indent=2),
         encoding="utf-8",
     )
 
     print(f"\nSaved model     : {args.output}")
-    print(f"Saved metadata  : {DEFAULT_META}")
-    print(f"Updated classes : {CLASS_NAMES_FILE}")
+    print(f"Saved metadata  : {meta_path}")
+    print(f"Updated classes : {class_names_path}")
     print("\nRestart the backend (or POST /api/plants/reload-model) to switch out of DEMO mode.")
     print("The app will then report model_source='trained_model' instead of 'demo_heuristic'.")
 

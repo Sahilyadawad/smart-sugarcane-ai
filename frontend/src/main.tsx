@@ -26,3 +26,15 @@ createRoot(container).render(
     </BrowserRouter>
   </StrictMode>,
 )
+
+// Register the service worker so the app can be installed to the home screen.
+// Only in a production build: during `vite dev` a worker would serve stale
+// modules and make edits look like they did nothing.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+      // An install failure costs the home-screen icon, not the app itself.
+      console.warn('Service worker registration failed:', error)
+    })
+  })
+}

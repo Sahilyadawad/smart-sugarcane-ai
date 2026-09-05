@@ -49,18 +49,67 @@ __all__ = [
     "build_backbone",
     "build_model",
     "build_soil_augmentation",
+    "export_inference_model",
     "compile_model",
     "preprocessing_layer",
     "unfreeze_for_finetuning",
 ]
 
 
-def build_soil_augmentation():
-    """Geometry-only augmentation.
+def _hue_preserving_jitter_class():
+    """Defined lazily so importing this module never requires TensorFlow."""
+    import keras
+    import tensorflow as tf
 
-    No brightness, contrast or hue jitter: a random brightness shift can turn a
-    photo of loamy soil into something the model should call black soil, which
-    teaches it precisely the wrong thing.
+    @keras.saving.register_keras_serializable(package="sugarcane_soil")
+    class HuePreservingColourJitter(tf.keras.layers.Layer):
+        """Scales value and saturation in HSV, leaving the hue channel alone."""
+
+        def __init__(self, brightness=0.22, saturation=0.45, **kwargs):
+            super().__init__(**kwargs)
+            self.brightness = brightness
+            self.saturation = saturation
+
+        def call(self, inputs, training=None):
+            if not training:
+                return inputs
+            import tensorflow as tf  # noqa: PLC0415
+
+            x = tf.clip_by_value(inputs / 255.0, 0.0, 1.0)
+            hsv = tf.image.rgb_to_hsv(x)
+            shape = (tf.shape(hsv)[0], 1, 1)
+            v_scale = tf.random.uniform(shape, 1.0 - self.brightness, 1.0 + self.brightness)
+            s_scale = tf.random.uniform(shape, 1.0 - self.saturation, 1.0 + self.saturation)
+            hue = hsv[..., 0]
+            sat = tf.clip_by_value(hsv[..., 1] * s_scale, 0.0, 1.0)
+            val = tf.clip_by_value(hsv[..., 2] * v_scale, 0.0, 1.0)
+            return tf.image.hsv_to_rgb(tf.stack([hue, sat, val], axis=-1)) * 255.0
+
+        def compute_output_shape(self, input_shape):
+            return input_shape
+
+        def get_config(self):
+            config = super().get_config()
+            config.update({"brightness": self.brightness, "saturation": self.saturation})
+            return config
+
+    return HuePreservingColourJitter
+
+
+def build_soil_augmentation():
+    """Geometry, plus exposure and saturation jitter that leaves HUE untouched.
+
+    An earlier version was geometry-only, on the reasoning that "colour is the
+    label". That was too blunt. In this taxonomy the label is carried by HUE:
+    red soil sits near 4-23 deg, alluvial near 27-50 deg. Saturation and
+    brightness are not label - they are the weather, the camera and the time of
+    day. Trained on vivid red soil only, the model learned "red = saturated"
+    instead of "red = low hue", and a bright, washed-out red field photo
+    (hue 1 deg, saturation 0.42) was confidently classified as alluvial.
+
+    So we jitter exposure and saturation to make those two dimensions
+    uninformative, while hue - the one channel that actually carries the class -
+    is never touched.
     """
     import tensorflow as tf
 
@@ -69,9 +118,32 @@ def build_soil_augmentation():
             tf.keras.layers.RandomFlip("horizontal_and_vertical"),
             tf.keras.layers.RandomRotation(0.25),
             tf.keras.layers.RandomZoom(0.15),
+            _hue_preserving_jitter_class()(name="hue_preserving_jitter"),
         ],
         name="soil_augmentation",
     )
+
+
+def export_inference_model(trained, num_classes, input_size, backbone):
+    """Rebuild the trained model WITHOUT the augmentation layer.
+
+    Augmentation is a no-op at inference, but leaving a custom layer in the
+    saved file means every process that loads it - the FastAPI backend, the
+    serverless function - must import that class or the load fails outright.
+    Stripping it keeps the deployed artifact a plain graph with no custom
+    objects, which is one less thing that can break in production.
+    """
+    export, _ = build_model(
+        num_classes=num_classes, input_size=input_size, backbone=backbone, augment=False
+    )
+    by_name = {layer.name: layer for layer in trained.layers}
+    copied = 0
+    for layer in export.layers:
+        source = by_name.get(layer.name)
+        if source is not None and source.weights:
+            layer.set_weights(source.get_weights())
+            copied += 1
+    return export, copied
 
 
 def build_model(

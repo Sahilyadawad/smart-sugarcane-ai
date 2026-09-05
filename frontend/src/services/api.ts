@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios'
+import type { ImageValidation } from '../types'
 
 // 127.0.0.1 rather than localhost: on Windows `localhost` resolves to ::1 (IPv6)
 // before 127.0.0.1, but uvicorn binds IPv4 only by default, so the browser's
@@ -59,6 +60,16 @@ api.interceptors.response.use(
 )
 
 /** Turn any axios failure into a single readable sentence for the UI. */
+/** Pull the image-gate payload out of a 422 so the UI can render it properly. */
+export function extractValidation(error: unknown): ImageValidation | null {
+  if (!axios.isAxiosError(error)) return null
+  const detail = error.response?.data?.detail
+  if (detail && typeof detail === 'object' && 'validation' in detail) {
+    return (detail as { validation: ImageValidation }).validation
+  }
+  return null
+}
+
 export function describeError(error: unknown, fallback = 'Something went wrong.'): string {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as
@@ -67,6 +78,11 @@ export function describeError(error: unknown, fallback = 'Something went wrong.'
 
     if (data?.problems?.length) {
       return `${typeof data.detail === 'string' ? data.detail : 'Invalid input.'} ${data.problems.join('; ')}`
+    }
+    // The image gate returns detail as an object, not a string.
+    if (data?.detail && typeof data.detail === 'object' && !Array.isArray(data.detail)) {
+      const detail = data.detail as { message?: string }
+      if (detail.message) return detail.message
     }
     if (typeof data?.detail === 'string') {
       return data.detail

@@ -22,17 +22,19 @@ import {
   Spinner,
 } from '../components/ui'
 import { ImageDropzone } from '../components/ImageDropzone'
+import { CheckingNotice, UploadHint, ValidationNotice } from '../components/ImageGate'
 import { ModelBadge } from '../components/ModelBadge'
 import { HonestyNotice } from '../components/HonestyNotice'
 import { VarietyCard } from './Varieties'
 import { FertilizerPanel } from './Fertilizer'
 import { useToast } from '../context/ToastContext'
-import { describeError, mediaUrl } from '../services/api'
+import { describeError, extractValidation, mediaUrl } from '../services/api'
 import { soilApi } from '../services/endpoints'
 import { label, percent } from '../utils/format'
 import type {
   ClimateType,
   ImageModelStatus,
+  ImageValidation,
   PlantingSeason,
   SoilAnalysisResult,
   SoilType,
@@ -59,16 +61,58 @@ export default function SoilAnalysis() {
   const [result, setResult] = useState<SoilAnalysisResult | null>(null)
   const [modelStatus, setModelStatus] = useState<ImageModelStatus | null>(null)
   const [analysing, setAnalysing] = useState(false)
+  const [validating, setValidating] = useState(false)
+  const [validation, setValidation] = useState<ImageValidation | null>(null)
 
   useEffect(() => {
     soilApi.modelStatus().then(setModelStatus).catch(() => setModelStatus(null))
   }, [])
+
+  /**
+   * Check the photo the moment it is chosen, before any analysis is offered.
+   *
+   * The backend runs this same gate inside /soil/analyze, so this is for a
+   * clear, immediate message - it is not what enforces the restriction.
+   */
+  const runValidation = async (chosen: File): Promise<ImageValidation | null> => {
+    setValidating(true)
+    try {
+      const check = await soilApi.validateImage(chosen)
+      setValidation(check)
+      return check
+    } catch (caught) {
+      toast.error('Could not check the photo', describeError(caught))
+      setValidation(null)
+      return null
+    } finally {
+      setValidating(false)
+    }
+  }
+
+  const handleSelect = (chosen: File | null) => {
+    setFile(chosen)
+    setValidation(null)
+    setResult(null)
+    if (chosen) void runValidation(chosen)
+  }
 
   const handleAnalyse = async () => {
     if (!file) {
       toast.info('Choose a photo first', 'Upload a picture of bare, freshly turned soil.')
       return
     }
+    // The gate already ran when the file was chosen. Re-run only if that check
+    // never completed, so a transient failure cannot leave the button unusable.
+    let check = validation
+    if (!check) {
+      check = await runValidation(file)
+      if (!check) return
+    }
+    if (!check.isSugarcane) {
+      toast.info('Soil not detected', check.title)
+      return
+    }
+
     setAnalysing(true)
     try {
       const data = await soilApi.analyze(file, {
@@ -89,7 +133,14 @@ export default function SoilAnalysis() {
         document.getElementById('soil-result')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
       )
     } catch (caught) {
-      toast.error('Analysis failed', describeError(caught))
+      const rejected = extractValidation(caught)
+      if (rejected) {
+        setValidation(rejected)
+        setResult(null)
+        toast.info('Soil not detected', rejected.message)
+      } else {
+        toast.error('Analysis failed', describeError(caught))
+      }
     } finally {
       setAnalysing(false)
     }
@@ -129,9 +180,11 @@ export default function SoilAnalysis() {
         <Card className="h-fit">
           <CardHeader title="Upload a soil photo" subtitle="Bare, freshly turned soil" icon={Camera} />
           <div className="space-y-5 p-5">
+            <UploadHint kind="soil" />
+
             <ImageDropzone
-              onSelect={setFile}
-              disabled={analysing}
+              onSelect={handleSelect}
+              disabled={analysing || validating}
               label="Upload a soil photo"
               hint="Photograph a levelled patch of bare soil from about 30-40 cm in indirect daylight. Keep grass, hands and tools out of the frame."
             />
@@ -257,12 +310,23 @@ export default function SoilAnalysis() {
             <button
               type="button"
               onClick={handleAnalyse}
-              disabled={analysing || !file}
+              disabled={analysing || validating || !file || validation?.isSugarcane === false}
               className="btn-primary w-full"
             >
-              {analysing ? <Spinner className="size-4" /> : <Search className="size-4" />}
-              {analysing ? 'Analysing soil...' : 'Analyze Soil'}
+              {analysing || validating ? <Spinner className="size-4" /> : <Search className="size-4" />}
+              {validating ? 'Checking this is soil...' : analysing ? 'Analysing soil...' : 'Analyze Soil'}
             </button>
+
+            {validating && <CheckingNotice kind="soil" />}
+            {!validating && validation && (
+              <ValidationNotice
+                validation={validation}
+                onRetry={validation.isSugarcane ? undefined : () => {
+                  setFile(null)
+                  setValidation(null)
+                }}
+              />
+            )}
 
             {analysing && (
               <div className="space-y-2 rounded-xl bg-slate-50 p-4 dark:bg-slate-800/50">

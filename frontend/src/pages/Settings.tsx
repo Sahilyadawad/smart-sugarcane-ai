@@ -148,7 +148,6 @@ export default function Settings() {
               <input
                 id="phone"
                 className="input"
-                placeholder="9876543210"
                 value={profile.phone}
                 onChange={(event) => setProfile((c) => ({ ...c, phone: event.target.value }))}
               />

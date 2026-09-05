@@ -90,7 +90,7 @@ export default function Register() {
                 minLength={2}
                 autoComplete="name"
                 className="input"
-                placeholder="Rohan Bhangi"
+                placeholder="Sudeep K"
                 value={form.name}
                 onChange={update('name')}
               />
@@ -153,7 +153,6 @@ export default function Register() {
                 <input
                   id="phone"
                   className="input"
-                  placeholder="9876543210"
                   value={form.phone}
                   onChange={update('phone')}
                 />

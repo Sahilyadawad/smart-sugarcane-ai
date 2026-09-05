@@ -69,3 +69,6 @@ ml/irrigation/irrigation_dataset.csv
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local dev-server launch config used by tooling
+.claude/

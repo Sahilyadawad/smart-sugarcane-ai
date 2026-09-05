@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
 from app.database import get_db
-from app.ml import disease_model, image_features
+from app.ml import disease_model, image_features, image_validation
 from app.models import PlantAnalysis, User
 from app.schemas.common import GrowthStage
 from app.schemas.plant import (
@@ -34,6 +34,20 @@ async def analyze(
     data = await storage.read_image_upload(file)
     image = image_features.load_image(data)
 
+    # No sugarcane, no analysis. The disease model is a closed-set classifier
+    # with no "not sugarcane" output, so without this gate a photo of a person,
+    # a maize leaf or bare soil still comes back as a confident diagnosis.
+    validation = image_validation.validate_sugarcane_image(image)
+    if not validation["isSugarcane"]:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error": "not_sugarcane",
+                "validation": validation,
+                "message": validation["message"],
+            },
+        )
+
     result = plant_service.analyse(
         image,
         growth_stage=growth_stage.value if growth_stage else None,
@@ -48,6 +62,27 @@ async def analyze(
         result["created_at"] = record.created_at
 
     return PlantAnalysisResult(**result)
+
+
+@router.post("/validate")
+async def validate_image(
+    file: UploadFile = File(..., description="Photo to check before analysis"),
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """Check whether a photo shows sugarcane, without running any analysis.
+
+    The frontend calls this first so it can show a clear message instead of a
+    fabricated diagnosis. /analyze applies the same gate itself, so skipping
+    this call cannot smuggle a non-sugarcane image through.
+    """
+    data = await storage.read_image_upload(file)
+    image = image_features.load_image(data)
+    return image_validation.validate_sugarcane_image(image)
+
+
+@router.get("/validator-status")
+def validator_status() -> dict:
+    return image_validation.status()
 
 
 @router.get("/history", response_model=list[PlantAnalysisOut])

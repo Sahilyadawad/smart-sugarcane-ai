@@ -40,10 +40,17 @@ import { ImageDropzone } from '../components/ImageDropzone'
 import { ModelBadge } from '../components/ModelBadge'
 import { HonestyNotice } from '../components/HonestyNotice'
 import { useToast } from '../context/ToastContext'
-import { describeError, mediaUrl } from '../services/api'
+import { describeError, extractValidation, mediaUrl } from '../services/api'
 import { plantApi } from '../services/endpoints'
 import { SEVERITY_TONE, formatDate, label, percent } from '../utils/format'
-import type { GrowthStage, ImageModelStatus, PlantAnalysisResult, PlantTrend } from '../types'
+import type {
+  GrowthStage,
+  ImageModelStatus,
+  ImageValidation,
+  PlantAnalysisResult,
+  PlantTrend,
+} from '../types'
+import { CheckingNotice, UploadHint, ValidationNotice } from '../components/ImageGate'
 
 const GROWTH_STAGES: GrowthStage[] = [
   'germination',
@@ -69,6 +76,8 @@ export default function PlantAnalysis() {
   const [trend, setTrend] = useState<PlantTrend | null>(null)
   const [modelStatus, setModelStatus] = useState<ImageModelStatus | null>(null)
   const [analysing, setAnalysing] = useState(false)
+  const [validating, setValidating] = useState(false)
+  const [validation, setValidation] = useState<ImageValidation | null>(null)
 
   const loadTrend = useCallback(async () => {
     try {
@@ -83,11 +92,47 @@ export default function PlantAnalysis() {
     plantApi.modelStatus().then(setModelStatus).catch(() => setModelStatus(null))
   }, [loadTrend])
 
+  /** Check the photo as soon as it is chosen. /plants/analyze enforces the same
+   *  gate server-side, so this exists for an immediate message, not for security. */
+  const runValidation = async (chosen: File): Promise<ImageValidation | null> => {
+    setValidating(true)
+    try {
+      const check = await plantApi.validateImage(chosen)
+      setValidation(check)
+      return check
+    } catch (caught) {
+      toast.error('Could not check the photo', describeError(caught))
+      setValidation(null)
+      return null
+    } finally {
+      setValidating(false)
+    }
+  }
+
+  const handleSelect = (chosen: File | null) => {
+    setFile(chosen)
+    setValidation(null)
+    setResult(null)
+    if (chosen) void runValidation(chosen)
+  }
+
   const handleAnalyse = async () => {
     if (!file) {
       toast.info('Choose a photo first', 'Upload a picture of a sugarcane leaf, stem or plant.')
       return
     }
+
+    // The gate already ran on selection; re-run only if that never completed.
+    let check = validation
+    if (!check) {
+      check = await runValidation(file)
+      if (!check) return
+    }
+    if (!check.isSugarcane) {
+      toast.info('Sugarcane not detected', check.title)
+      return
+    }
+
     setAnalysing(true)
     try {
       const data = await plantApi.analyze(file, growthStage || undefined, notes || undefined)
@@ -101,7 +146,15 @@ export default function PlantAnalysis() {
         document.getElementById('plant-result')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
       )
     } catch (caught) {
-      toast.error('Analysis failed', describeError(caught))
+      // The server runs the same gate, so a rejection can arrive here too.
+      const rejected = extractValidation(caught)
+      if (rejected) {
+        setValidation(rejected)
+        setResult(null)
+        toast.info('Sugarcane not detected', rejected.message)
+      } else {
+        toast.error('Analysis failed', describeError(caught))
+      }
     } finally {
       setAnalysing(false)
     }
@@ -142,9 +195,11 @@ export default function PlantAnalysis() {
         <Card className="h-fit">
           <CardHeader title="Upload a photo" subtitle="Leaf, stem or whole plant" icon={Camera} />
           <div className="space-y-5 p-5">
+            <UploadHint kind="plant" />
+
             <ImageDropzone
-              onSelect={setFile}
-              disabled={analysing}
+              onSelect={handleSelect}
+              disabled={analysing || validating}
               label="Upload a sugarcane photo"
               hint="Fill the frame with the affected leaf or stalk, in daylight, avoiding deep shade and direct flash."
             />
@@ -183,12 +238,27 @@ export default function PlantAnalysis() {
             <button
               type="button"
               onClick={handleAnalyse}
-              disabled={analysing || !file}
+              disabled={analysing || validating || !file || validation?.isSugarcane === false}
               className="btn-primary w-full"
             >
-              {analysing ? <Spinner className="size-4" /> : <Search className="size-4" />}
-              {analysing ? 'Analysing image...' : 'Analyze Plant'}
+              {analysing || validating ? <Spinner className="size-4" /> : <Camera className="size-4" />}
+              {validating
+                ? 'Checking for sugarcane...'
+                : analysing
+                  ? 'Analysing image...'
+                  : 'Upload Sugarcane Photo'}
             </button>
+
+            {validating && <CheckingNotice kind="plant" />}
+            {!validating && validation && (
+              <ValidationNotice
+                validation={validation}
+                onRetry={validation.isSugarcane ? undefined : () => {
+                  setFile(null)
+                  setValidation(null)
+                }}
+              />
+            )}
 
             {analysing && (
               <div className="space-y-2 rounded-xl bg-slate-50 p-4 dark:bg-slate-800/50">

@@ -63,6 +63,14 @@ def make_image(kind: str) -> bytes:
             x, y = (i * 53) % 640, (i * 97) % 480
             draw.ellipse([x, y, x + 3, y + 3], fill=(172, 96, 58))
 
+    elif kind == "portrait":
+        # Neutral studio backdrop with a skin-tone oval: the shape of image that
+        # came back as "Clay Soil, 62 % confidence" before the gate existed.
+        image = Image.new("RGB", (640, 480), (204, 204, 204))
+        draw = ImageDraw.Draw(image)
+        draw.ellipse([220, 90, 420, 350], fill=(198, 156, 124))
+        draw.rectangle([180, 330, 460, 480], fill=(232, 214, 210))
+
     buffer = io.BytesIO()
     image.save(buffer, format="JPEG", quality=88)
     return buffer.getvalue()
@@ -246,6 +254,53 @@ def run_checks(client: TestClient) -> int:
         print(f"        trend = {response.json()['direction']}")
 
     check("plant model status", client.get("/api/plants/model-status").status_code == 200)
+
+    print("")
+    print("=== 4b. Image gate: no sugarcane, no analysis ===")
+    response = client.post(
+        "/api/plants/validate",
+        files={"file": ("cane.jpg", make_image("healthy_leaf"), "image/jpeg")},
+        headers=headers,
+    )
+    check("validate endpoint responds", response.status_code == 200, response.text[:160])
+    if response.status_code == 200:
+        check("sugarcane photo accepted", response.json()["isSugarcane"] is True)
+
+    response = client.post(
+        "/api/plants/analyze",
+        files={"file": ("person.jpg", make_image("portrait"), "image/jpeg")},
+        data={"save": "false"},
+        headers=headers,
+    )
+    check("portrait rejected by plant analysis", response.status_code == 422, response.text[:160])
+
+    response = client.post(
+        "/api/soil/analyze",
+        files={"file": ("person.jpg", make_image("portrait"), "image/jpeg")},
+        data={"save": "false"},
+        headers=headers,
+    )
+    check("portrait rejected by soil analysis", response.status_code == 422, response.text[:160])
+    if response.status_code == 422:
+        detail = response.json().get("detail", {})
+        check("rejection explains why", bool(detail.get("message")))
+        check("rejection carries validation payload", "validation" in detail)
+
+    response = client.post(
+        "/api/soil/analyze",
+        files={"file": ("leaf.jpg", make_image("healthy_leaf"), "image/jpeg")},
+        data={"save": "false"},
+        headers=headers,
+    )
+    check("leaf photo rejected by soil analysis", response.status_code == 422, response.text[:160])
+
+    response = client.post(
+        "/api/plants/analyze",
+        files={"file": ("soil.jpg", make_image("soil_black"), "image/jpeg")},
+        data={"save": "false"},
+        headers=headers,
+    )
+    check("soil photo rejected by plant analysis", response.status_code == 422, response.text[:160])
 
     print("\n=== 5. Soil analysis ===")
     response = client.post(

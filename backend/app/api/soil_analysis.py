@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
 from app.database import get_db
-from app.ml import image_features, soil_model
+from app.ml import image_features, image_validation, soil_model
 from app.models import SoilAnalysis, User
 from app.schemas.common import ClimateType, PlantingSeason, SoilType, WaterAvailability
 from app.schemas.soil import SoilAnalysisOut, SoilAnalysisResult, SoilFarmContext, SoilModelStatus
@@ -44,6 +44,20 @@ async def analyze(
         soil_type_override=soil_type_override,
     )
 
+    # The soil model is a closed-set classifier too - it returned "Clay Soil,
+    # 62 % confidence" for a portrait photograph. Reject anything that is not
+    # a soil surface before it can produce a number.
+    validation = image_validation.validate_soil_image(image)
+    if not validation["isSugarcane"]:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error": "not_soil",
+                "validation": validation,
+                "message": validation["message"],
+            },
+        )
+
     result = soil_service.analyse(image, context)
 
     if save:
@@ -69,6 +83,17 @@ def history(
         .limit(limit)
     ).all()
     return [SoilAnalysisOut.model_validate(row) for row in rows]
+
+
+@router.post("/validate")
+async def validate_image(
+    file: UploadFile = File(..., description="Photo to check before soil analysis"),
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """Check whether a photo shows a soil surface, without analysing it."""
+    data = await storage.read_image_upload(file)
+    image = image_features.load_image(data)
+    return image_validation.validate_soil_image(image)
 
 
 @router.get("/model-status", response_model=SoilModelStatus)

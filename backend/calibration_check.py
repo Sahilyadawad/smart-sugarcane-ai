@@ -6,6 +6,13 @@ heuristic against real sugarcane photographs - nothing here claims diagnostic
 accuracy. It is a regression guard: it catches the case where a change to the
 feature extractor silently makes every image classify as one class.
 
+It calls _demo_predict directly rather than predict(). Once a trained model
+is present, predict() routes to the CNN - which has no 'sandy', 'loamy',
+'smut' or 'leaf_scald' class at all, so those cases could never pass, and a
+CNN's output on flat synthetic swatches is meaningless anyway since they look
+nothing like the photographs it was trained on. The trained models are
+measured separately, on held-out photographs, by ml/soil_analysis/evaluate.py.
+
     cd backend
     venv\\Scripts\\python calibration_check.py
 """
@@ -83,7 +90,7 @@ def main() -> int:
     print("\nDEMO DISEASE HEURISTIC")
     print("-" * 72)
     for expected, image in DISEASE_CASES:
-        result = disease_model.predict(image)
+        result = disease_model._demo_predict(image)
         got = result["condition"]
         runner_up = sorted(result["probabilities"].items(), key=lambda kv: -kv[1])[1]
         ok = got == expected
@@ -97,7 +104,7 @@ def main() -> int:
     print("\nDEMO SOIL HEURISTIC")
     print("-" * 72)
     for expected, image in SOIL_CASES:
-        result = soil_model.predict(image)
+        result = soil_model._demo_predict(image)
         got = result["soil_type"]
         runner_up = sorted(result["probabilities"].items(), key=lambda kv: -kv[1])[1]
         ok = got == expected
